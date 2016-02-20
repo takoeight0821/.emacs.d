@@ -39,6 +39,6 @@ flycheck_*.el
 # server auth directory
 /server/
 
-/places/
 .DS_Store
-ac-comphint.dat
+ac-comphist.dat
+places
