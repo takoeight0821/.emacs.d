@@ -1,8 +1,5 @@
 (need-packages '(slime
-                 ac-slime
-                 rainbow-delimiters
-                 paredit))
-
+                 ac-slime))
 (cond
  ((file-exists-p (expand-file-name "~/quicklisp/slime-helper.el"))
   (load (expand-file-name "~/quicklisp/slime-helper.el")))
@@ -81,25 +78,3 @@
 
 (global-set-key "\C-cH" 'my-toggle-resplit-slime-window)
 
-(autoload 'rainbow-delimiters "rainbow-delimiters" nil t)
-(add-hook 'emacs-lisp-mode-hook
-          'rainbow-delimiters-mode)
-(add-hook 'lisp-mode-hook
-          'rainbow-delimiters-mode)
-(add-hook 'slime-repl-mode-hook
-          'rainbow-delimiters-mode)
-(add-hook 'scheme-mode-hook
-          'rainbow-delimiters-mode)
-
-(autoload 'paredit "paredit" nil t)
-
-(add-hook 'emacs-lisp-mode-hook
-          'enable-paredit-mode)
-(add-hook 'lisp-mode-hook
-          'enable-paredit-mode)
-(add-hook 'slime-repl-mode-hook
-          'enable-paredit-mode)
-(add-hook 'scheme-mode-hook
-          'enable-paredit-mode)
-(add-hook 'clojure-mode-hook
-          'enable-paredit-mode)
