@@ -24,7 +24,7 @@
 (add-hook 'window-setup-hook
 	  (lambda ()
 	    (custom-set-faces
-	     '(default ((t (:height 180 :family "Ricty Diminished")))))
+	     '(default ((t (:height 120 :family "Ricty Diminished")))))
 	    (set-jp-font "Ricty Diminished")))
 
 ;; color-theme
