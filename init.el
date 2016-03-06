@@ -1,5 +1,5 @@
 (defvar *emacs-config-directory* (file-name-directory load-file-name))
-(add-to-list 'load-path (expand-file-name "site-list" *emacs-config-directory*))
+(add-to-list 'load-path (expand-file-name "site-lisp/" *emacs-config-directory*))
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))

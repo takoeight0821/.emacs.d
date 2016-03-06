@@ -23,3 +23,5 @@
 (need-package 'typescript-mode)
 (require 'typescript-mode)
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
+
+(electric-pair-mode 1)
