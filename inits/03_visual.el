@@ -31,7 +31,7 @@
 
 ;; color-theme
 (need-package 'railscasts-theme)
-(require 'railscasts-theme)
-(load-theme 'railscasts t nil)
-(setq frame-background-mode 'dark)
-
+(use-package railscasts-theme
+  :config
+  (load-theme 'railscasts t nil)
+  (setq frame-background-mode 'dark))

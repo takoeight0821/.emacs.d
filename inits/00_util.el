@@ -10,4 +10,3 @@
 (when (windowsp)
   (setq path-separator ";"))
 (setq exec-path (parse-colon-path (getenv "PATH")))
-

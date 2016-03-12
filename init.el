@@ -12,8 +12,19 @@
 (defun need-packages (pack-list)
   (mapc #'need-package pack-list))
 
+(need-package 'use-package)
+(require 'use-package)
+
 (need-package 'init-loader)
-(require'init-loader)
-(setq init-loader-show-log-after-init 'error-only)
-(init-loader-load
-   (expand-file-name "inits/" (file-name-directory load-file-name)))
+
+(use-package init-loader
+  :config
+  (setq init-loader-show-log-after-init 'error-only)
+  (init-loader-load
+   (expand-file-name "inits/" (file-name-directory load-file-name))))
+
+;;; yaml-mode
+(need-package 'yaml-mode)
+(use-package yaml-mode
+  :commands (yaml-mode)
+  :mode (("\\.ya?ml$" . yaml-mode)))
