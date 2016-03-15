@@ -55,6 +55,13 @@
    '((?λ ("\\<lambda\\>" lisp lisp-interaction emacs-lisp scheme))
      (?λ ("\\<function\\>" js2))))
 
+  ;; cl21
+  (add-hook 'slime-connected-hook
+            (lambda ()
+              (when (slime-eval `(cl:if (cl:find-package :cl21-user) t))
+                (slime-repl-set-package :cl21-user)
+                (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
+
   (turn-on-paredit 'lisp-mode)
   (turn-on-paredit 'slime-lisp-mode)
   (turn-on-paredit 'slime-repl-mode)
