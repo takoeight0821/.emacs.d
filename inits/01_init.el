@@ -34,3 +34,8 @@
 
 (setq make-backup-files nil)
 (setq auto-save-default nil)
+
+(need-package 'htmlize)
+(use-package htmlize)
+
+(electric-pair-mode 1)

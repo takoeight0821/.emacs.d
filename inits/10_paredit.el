@@ -2,7 +2,7 @@
 
 (defun turn-on-paredit (mode)
   (let ((hook (intern (concat (symbol-name mode) "-hook"))))
-    (add-hook hook #'(lambda () (electric-pair-mode 0) (enable-paredit-mode)))))
+    (add-hook hook #'(lambda () (enable-paredit-mode)))))
 
 (need-package 'paredit)
 (use-package paredit

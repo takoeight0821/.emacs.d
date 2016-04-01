@@ -25,7 +25,7 @@
 	  (lambda ()
 	    (custom-set-faces
        (if (mac-os-p)
-         '(default ((t (:height 160 :family "Ricty Diminished"))))
+         '(default ((t (:height 170 :family "Ricty Diminished"))))
          '(default ((t (:height 120 :family "Ricty Diminished"))))))
 	    (set-jp-font "Ricty Diminished")))
 
@@ -35,3 +35,5 @@
   :config
   (load-theme 'railscasts t nil)
   (setq frame-background-mode 'dark))
+
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
