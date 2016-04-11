@@ -51,9 +51,9 @@
                                                                                 (match-end ,n)
                                                                                 ,glyph)))))))))))
 
-  (set-pretty-patterns
-   '((?λ ("\\<lambda\\>" lisp lisp-interaction emacs-lisp scheme))
-     (?λ ("\\<function\\>" js2))))
+  ;; (set-pretty-patterns
+  ;;  '((?λ ("\\<lambda\\>" lisp lisp-interaction emacs-lisp scheme))
+  ;;    (?λ ("\\<function\\>" js2))))
 
   ;; cl21
   (add-hook 'slime-connected-hook

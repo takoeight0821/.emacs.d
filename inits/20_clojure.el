@@ -18,7 +18,7 @@
     :config
     (add-to-list 'ac-modes 'cider-mode)
     (add-to-list 'ac-modes 'cider-repl-mode))
-  (autoload 'ac-cider "ac-cider" nil t)
+  ; (autoload 'ac-cider "ac-cider" nil t)
   (add-hook 'cider-mode-hook 'ac-flyspell-workaround)
   (add-hook 'cider-mode-hook 'ac-cider-setup)
   (add-hook 'cider-repl-mode-hook 'ac-cider-setup)
@@ -32,4 +32,4 @@
         cider-prompt-save-file-on-load 'always-save
         cider-font-lock-dynamically '(macro core function var)
         cider-overlays-use-font-lock t)
-  (cider-repl-toggle-pretty-printing))
+  )
