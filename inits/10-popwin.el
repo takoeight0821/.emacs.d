@@ -11,6 +11,7 @@
                 ("*slime-description*")
                 ("*slime-compilation*" :noselect t)
                 ("*slime-xref*")
+                ("*cider-error*")
                 (slime-connection-list-mode)
                 (slime-repl-mode)
                 (sldb-mode :height 20 :stick t))))

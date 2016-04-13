@@ -1,5 +1,6 @@
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
 (defun package-install-with-refresh (package)
@@ -13,6 +14,15 @@
       (progn
 	(package-install-with-refresh package)
 	(require package))))
+
+(defun package-bundle (package)
+  (or (package-installed-p package)
+      (package-install-with-refresh package)))
+
+(require-or-install 'use-package)
+
+(setq use-package-always-ensure t)
+(setq use-package-verbose t)
 
 (require-or-install 'init-loader)
 

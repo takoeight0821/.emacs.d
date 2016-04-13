@@ -1,4 +1,4 @@
-(el-get-bundle 'rainbow-delimiters)
+(package-bundle 'rainbow-delimiters)
 
 (require 'rainbow-delimiters)
-(add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)

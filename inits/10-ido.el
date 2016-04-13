@@ -38,3 +38,6 @@
            (delete-region (region-beginning) (region-end))))
     (insert to_insert)))
 (global-set-key (kbd "M-y") 'konix/kill-ring-insert)
+
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
