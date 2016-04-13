@@ -25,9 +25,6 @@
 (setq use-package-verbose t)
 
 (require-or-install 'init-loader)
-
 (setq init-loader-show-log-after-init nil)
-
 (init-loader-load
  (expand-file-name "inits/" user-emacs-directory))
-

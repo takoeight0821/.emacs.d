@@ -33,6 +33,6 @@
 (require-or-install 'railscasts-theme)
 
 (load-theme 'railscasts t nil)
-(setq frame-background-mode 'dark))
+(setq frame-background-mode 'dark)
 
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
