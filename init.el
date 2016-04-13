@@ -1,6 +1,8 @@
+(eval-when-compile
+  (require 'cl))
+
 (require 'package)
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("malpa" . "https://malpa.org/packages/"))
 (package-initialize)
 
 (defun package-install-with-refresh (package)
@@ -12,8 +14,8 @@
 (defun require-or-install (package)
   (or (require package nil t)
       (progn
-	(package-install-with-refresh package)
-	(require package))))
+        (package-install-with-refresh package)
+        (require package))))
 
 (defun package-bundle (package)
   (or (package-installed-p package)

@@ -10,7 +10,7 @@
  '(haskell-process-log t)
  '(haskell-stylish-on-save t)
  '(haskell-process-type 'stack-ghci)
- '(haskell-interactive-popup-errors nil)))
+ '(haskell-interactive-popup-errors nil))
 
 (require 'haskell-cabal)
 

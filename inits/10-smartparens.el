@@ -1,4 +1,4 @@
-(el-get-bundle smartparens)
+(package-bundle smartparens)
 (smartparens-global-mode t)
 (require 'smartparens-config)
 

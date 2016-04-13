@@ -1,6 +1,5 @@
 (load (expand-file-name "~/.roswell/impls/ALL/ALL/quicklisp/slime-helper.el"))
 
-
 (require-or-install 'slime)
 (require-or-install 'ac-slime)
 
