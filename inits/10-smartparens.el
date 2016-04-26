@@ -1,8 +1,7 @@
-(package-bundle smartparens)
-(smartparens-global-mode t)
+(package-bundle 'smartparens)
 (require 'smartparens-config)
 
-(add-hook 'minibuffer-setup-hook 'turn-on-smartparens-strict-mode)
+(smartparens-global-strict-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybinding management
