@@ -37,4 +37,4 @@
 
 (require-or-install 'htmlize)
 
-(electric-pair-mode 1)
+;(electric-pair-mode 1)

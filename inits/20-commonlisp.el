@@ -65,5 +65,7 @@
               (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
 
 (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'lisp-mode-hook #'turn-on-smartparens-strict-mode)
 (add-hook 'slime-lisp-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'slime-repl-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'slime-repl-mode-hook #'turn-on-smartparens-strict-mode)
