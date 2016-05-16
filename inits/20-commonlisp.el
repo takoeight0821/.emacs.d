@@ -1,4 +1,4 @@
-(load (expand-file-name "~/.roswell/impls/ALL/ALL/quicklisp/slime-helper.el"))
+(load (expand-file-name "~/.roswell/lisp/quicklisp/slime-helper.el"))
 
 (require-or-install 'slime)
 (require-or-install 'ac-slime)
@@ -6,11 +6,6 @@
 (require 'slime-autoloads)
 
 (setq inferior-lisp-program "ros -Q run")
-
-(setq slime-lisp-implementations
-      `((sbcl ("sbcl" "--dynamic-space-size" "2000"))
-        (roswell ("ros" "dynamic-space-size=2000" "-Q" "-l" "~/.sbclrc" "run"))))
-(setq slime-default-lisp 'roswell)
 
 (add-hook 'slime-mode-hook
           (lambda ()
