@@ -64,3 +64,4 @@
 (add-hook 'slime-lisp-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'slime-repl-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'slime-repl-mode-hook #'turn-on-smartparens-strict-mode)
+(add-hook 'slime-repl-mode-hook 'ansi-color-for-comint-mode-on)

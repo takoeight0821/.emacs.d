@@ -49,16 +49,23 @@
      "\\<memoized-lambda\\>"
      "\\<memoize\\>"
      "\\<cambda\\>"
+     "\\<procedure\\>"
      "\\<macro\\>"
      "\\<let\\>"
      "\\<letrec\\>"
      "\\<let\\*\\>"
+     "\\<with-symbols\\>"
      "\\<if\\>"
      "\\<seq\\>"
 ;     "\\<apply\\>"
+     "\\<capply\\>"
      "\\<generate-array\\>"
      "\\<array-bounds\\>"
      "\\<array-ref\\>"
+     "\\<tensor\\>"
+     "\\<generate-tensor\\>"
+     "\\<contract\\>"
+     "\\<tensor-map\\>"
 
      "\\<loop\\>"
      "\\<match\\>"
@@ -174,17 +181,21 @@
         ((equal "execute" name) 2)
         ((equal "lambda" name) 2)
         ((equal "cambda" name) 2)
+        ((equal "procedure" name) 2)
         ((equal "macro" name) 2)
         ((equal "memoized-lambda" name) 2)
         ((equal "memoize" name) 2)
         ((equal "letrec" name) 2)
         ((equal "let" name) 2)
         ((equal "let*" name) 2)
+        ((equal "with-symbols" name) 2)
         ((equal "if" name) 2)
         ((equal "apply" name) 2)
         ((equal "generate-array" name) 2)
         ((equal "array-size" name) 2)
         ((equal "array-ref" name) 2)
+        ((equal "generate-tensor" name) 2)
+        ((equal "tensor-map" name) 2)
         ((equal "loop" name) 2)
         ((equal "match" name) 2)
         ((equal "match-lambda" name) 2)
@@ -236,7 +247,7 @@
   (set (make-local-variable 'font-lock-defaults)
        '((egison-font-lock-keywords
           egison-font-lock-keywords-1 egison-font-lock-keywords-2)
-         nil t (("+-*/=?%:_.'∂∇α-ωΑ-Ω" . "w") ("<" . "(") (">" . ")"))
+         nil t (("+-*/=?%:_~.'∂∇α-ωΑ-Ω" . "w") ("<" . "(") (">" . ")"))
          ))
   (set (make-local-variable 'indent-line-function) 'egison-indent-line)
   (set (make-local-variable 'comment-start) ";")

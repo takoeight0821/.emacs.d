@@ -1,7 +1,7 @@
 (package-bundle 'smartparens)
 (require 'smartparens-config)
 
-(smartparens-global-mode t)
+(smartparens-global-strict-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybinding management
