@@ -37,4 +37,8 @@
 
 (require-or-install 'htmlize)
 
+(require 'server)
+(unless (server-running-p)
+  (setver-start))
+
 ;(electric-pair-mode 1)
