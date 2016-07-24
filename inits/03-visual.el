@@ -25,9 +25,9 @@
           (lambda ()
             (custom-set-faces
              (if (mac-os-p)
-                 '(default ((t (:height 180 :family "Ricty Diminished"))))
-               '(default ((t (:height 120 :family "Ricty Diminished"))))))
-            (set-jp-font "Ricty Diminished")))
+                 '(default ((t (:height 180 :family "OsakaMono"))))
+               '(default ((t (:height 120 :family "migu-1m-regular"))))))
+            (set-jp-font "OsakaMono")))
 
 ;; color-theme
 (require-or-install 'railscasts-theme)
