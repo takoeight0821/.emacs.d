@@ -1,3 +1,4 @@
+
 (package-bundle 'clojure-mode)
 
 (use-package clojure-mode
@@ -6,6 +7,10 @@
   (add-hook 'clojure-mode #'subword-mode)
   (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode)
   (add-hook 'clojure-mode 'rainbow-delimiters-mode-enable))
+
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
 
 (package-bundle 'cider)
 (use-package cider
