@@ -39,7 +39,7 @@
 
 (require 'server)
 (unless (server-running-p)
-  (setver-start))
+  (server-start))
 
 ;(electric-pair-mode 1)
 

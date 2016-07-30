@@ -1,5 +1,6 @@
 (mapc #'require-or-install
       '(haskell-mode ghc))
+(package-bundle 'company-ghc)
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook 'rainbow-delimiters-mode)
@@ -17,3 +18,7 @@
 (autoload 'ghc-init "stack ghc" nil t)
 (autoload 'ghc-debug "stack ghc" nil t)
 (add-hook 'haskell-mode-hook (lambda () (ghc-init)))
+
+(add-hook 'haskell-mode-hook 'company-mode)
+(add-to-list 'company-backends 'company-ghc)
+(custom-set-variables '(company-ghc-show-info t))
