@@ -38,3 +38,17 @@
 (setq init-loader-show-log-after-init nil)
 (init-loader-load
  (expand-file-name "inits/" user-emacs-directory))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-ghc-show-info t)
+ '(haskell-interactive-popup-errors nil)
+ '(haskell-process-auto-import-loaded-modules t)
+ '(haskell-process-log t)
+ '(haskell-process-suggest-remove-import-lines t)
+ '(haskell-process-type (quote stack-ghci))
+ '(haskell-stylish-on-save t))
+(put 'upcase-region 'disabled nil)
