@@ -46,3 +46,5 @@ helm-adaptive-history
 abbrev_defs
 smex-items
 ido.last
+
+site-lisp/PG/
