@@ -4,6 +4,9 @@
   (setf proof-colour-locked t)
   (setf overlay-arrow-string ""))
 (setf proof-follow-mode 'followdown)
+(add-hook 'proof-mode-hook
+  '(lambda ()
+     (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
