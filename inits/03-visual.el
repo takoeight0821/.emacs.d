@@ -33,6 +33,7 @@
 ;; color-theme
 (require-or-install 'railscasts-theme)
 
+
 (load-theme 'railscasts t nil)
 (setq frame-background-mode 'dark)
 

@@ -1,5 +1,6 @@
 (package-bundle 'smartparens)
 (require 'smartparens-config)
+(require 'bind-key)
 
 (smartparens-global-strict-mode t)
 

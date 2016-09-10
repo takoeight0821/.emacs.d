@@ -1,4 +1,4 @@
-(load "~/.emacs.d/site-lisp/PG/generic/proof-site")
+(load "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site")
 (setf proof-splash-enable nil)
 (when (not window-system)
   (setf proof-colour-locked t)

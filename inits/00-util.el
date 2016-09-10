@@ -9,4 +9,6 @@
 (setq max-lisp-eval-depth 10000)
 (when (windowsp)
   (setq path-separator ";"))
+(when (equal (getenv "SHELL") "/usr/local/bin/fish")
+  (setq path-separator " "))
 (setq exec-path (parse-colon-path (getenv "PATH")))

@@ -1,5 +1,8 @@
 (mapc #'require-or-install
-      '(ido ido-ubiquitous ido-vertical-mode smex))
+      '(ido ido-ubiquitous ido-vertical-mode smex ))
+
+(eval-when-compile
+  (require 'cl))
 
 (setq ido-everywhere t)
 (setq ido-enable-flex-matching t)
