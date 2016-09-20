@@ -50,5 +50,16 @@
  '(haskell-process-log t)
  '(haskell-process-suggest-remove-import-lines t)
  '(haskell-process-type (quote stack-ghci))
- '(haskell-stylish-on-save t))
+ '(haskell-stylish-on-save t)
+ '(package-selected-packages
+   (quote
+    (alchemist yasnippet yaml-mode use-package tuareg smex smartparens scala-mode rainbow-delimiters railscasts-theme popwin markdown-mode init-loader ido-vertical-mode ido-ubiquitous htmlize geiser exec-path-from-shell evil-surround evil-numbers elixir-mode company-ghc cider ac-slime ac-racer))))
 (put 'upcase-region 'disabled nil)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ido-vertical-first-match-face ((t (:underline (:inherit ido-first-match)))))
+ '(proof-locked-face ((t (:background "gray30"))))
+ '(proof-queue-face ((((type x) (class color) (background dark)) (:background "darksalmon")))))
