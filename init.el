@@ -53,7 +53,7 @@
  '(haskell-stylish-on-save t)
  '(package-selected-packages
    (quote
-    (alchemist yasnippet yaml-mode use-package tuareg smex smartparens scala-mode rainbow-delimiters railscasts-theme popwin markdown-mode init-loader ido-vertical-mode ido-ubiquitous htmlize geiser exec-path-from-shell evil-surround evil-numbers elixir-mode company-ghc cider ac-slime ac-racer))))
+    (yasnippet yaml-mode use-package tuareg smex smartparens scala-mode rainbow-delimiters railscasts-theme popwin markdown-mode init-loader ido-vertical-mode ido-ubiquitous htmlize geiser exec-path-from-shell evil-surround evil-numbers elixir-mode company-ghc cider ac-slime ac-racer))))
 (put 'upcase-region 'disabled nil)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
