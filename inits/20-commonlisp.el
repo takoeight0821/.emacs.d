@@ -1,6 +1,6 @@
 (load (expand-file-name "~/.roswell/helper.el"))
 
-(require-or-install 'slime)
+;; (require-or-install 'slime)
 (require-or-install 'ac-slime)
 
 (require 'slime-autoloads)

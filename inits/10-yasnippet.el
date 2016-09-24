@@ -1,3 +1,2 @@
-(package-bundle 'yasnippet)
-(require 'yasnippet)
+(require-or-install 'yasnippet)
 (yas-global-mode t)
