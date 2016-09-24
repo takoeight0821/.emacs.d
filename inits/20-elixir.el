@@ -13,4 +13,5 @@
                  :actions '(insert navigate)))
 
 (add-hook 'elixir-mode-hook 'ac-alchemist-setup)
+(add-hook 'alchemist-iex-mode-hook 'ac-alchemist-setup)
 (define-key alchemist-iex-mode-map (kbd "T") nil)

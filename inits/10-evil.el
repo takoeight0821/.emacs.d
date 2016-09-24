@@ -10,4 +10,8 @@
 (global-set-key (kbd "C-c +") 'evil-numbers/inc-at-pt)
 (global-set-key (kbd "C-c -") 'evil-numbers/dec-at-pt)
 
+(setcdr evil-insert-state-map nil)
+;; but [escape] should switch back to normal state
+(define-key evil-insert-state-map [escape] 'evil-normal-state)
+
 (evil-mode)
