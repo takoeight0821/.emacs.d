@@ -1,5 +1,5 @@
-(eval-when-compile
-  (require 'cl))
+;; (eval-when-compile)
+(require 'cl)
 
 (let ((default-directory (expand-file-name "~/.emacs.d/site-lisp")))
   (add-to-list 'load-path default-directory)
@@ -26,8 +26,10 @@
         (require package))))
 
 (defun package-bundle (package)
-  (or (package-installed-p package)
-      (package-install-with-refresh package)))
+  (require-or-install package))
+;; (defun package-bundle (package)
+;;   (or (package-installed-p package)
+;;       (package-install-with-refresh package)))
 
 (require-or-install 'use-package)
 
