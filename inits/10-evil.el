@@ -14,4 +14,15 @@
 ;; but [escape] should switch back to normal state
 (define-key evil-insert-state-map [escape] 'evil-normal-state)
 
+(defun evil-eshell ()
+  (interactive)
+  (split-window-right)
+  (other-window 1)
+  (eshell))
+
+(evil-ex-define-cmd "esh[ell]" 'evil-eshell)
+
+(eval-after-load "esh-module"
+  '(setq eshell-modules-list (delq 'eshell-ls (delq 'eshell-unix eshell-modules-list))))
+
 (evil-mode)
