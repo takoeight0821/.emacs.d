@@ -1,6 +1,6 @@
 (require-or-install 'elixir-mode)
 (require-or-install 'alchemist)
-(package-bundle 'ac-alchemist)
+(require-or-install 'ac-alchemist)
 
 
 (sp-with-modes '(elixir-mode)
