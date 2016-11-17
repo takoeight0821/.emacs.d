@@ -13,6 +13,8 @@
 (setcdr evil-insert-state-map nil)
 ;; but [escape] should switch back to normal state
 (define-key evil-insert-state-map [escape] 'evil-normal-state)
+(define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+(define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 
 (defun evil-eshell ()
   (interactive)

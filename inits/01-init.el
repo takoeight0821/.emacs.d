@@ -45,3 +45,5 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (setq vc-follow-symlinks nil)
+
+(package-bundle 'package-utils)

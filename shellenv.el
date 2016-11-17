@@ -1,0 +1,1 @@
+(setenv "PATH" "/Users/konoyuya/.opam/system/bin:/Users/konoyuya/Projects/Repos/Go/bin:/usr/local/opt/llvm/bin:/Users/konoyuya/.local/bin:/Users/konoyuya/.roswell/bin:/Users/konoyuya/.cargo/bin:/usr/local/bin:/usr/local/sbin:/Users/konoyuya/.zplug/bin:/usr/bin:/bin:/usr/sbin:/sbin")

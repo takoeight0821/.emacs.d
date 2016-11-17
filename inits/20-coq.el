@@ -7,6 +7,7 @@
 (add-hook 'proof-mode-hook
   '(lambda ()
      (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
+(setq coq-prog-name "/Users/konoyuya/.opam/system/bin/coqtop")
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

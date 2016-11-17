@@ -1,6 +1,11 @@
 ;; (eval-when-compile)
 (require 'cl)
 
+;; load environment value
+(load-file (expand-file-name "~/.emacs.d/shellenv.el"))
+(dolist (path (reverse (split-string (getenv "PATH") ":")))
+  (add-to-list 'exec-path path))
+
 (let ((default-directory (expand-file-name "~/.emacs.d/site-lisp")))
   (add-to-list 'load-path default-directory)
   (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
@@ -8,9 +13,6 @@
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives
-             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
 (package-initialize)
 
 (defun package-install-with-refresh (package)
@@ -26,10 +28,8 @@
         (require package))))
 
 (defun package-bundle (package)
-  (require-or-install package))
-;; (defun package-bundle (package)
-;;   (or (package-installed-p package)
-;;       (package-install-with-refresh package)))
+  (or (package-installed-p package)
+      (package-install-with-refresh package)))
 
 (require-or-install 'use-package)
 
@@ -40,6 +40,8 @@
 (setq init-loader-show-log-after-init nil)
 (init-loader-load
  (expand-file-name "inits/" user-emacs-directory))
+
+(electric-indent-mode nil)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -55,7 +57,7 @@
  '(haskell-stylish-on-save t)
  '(package-selected-packages
    (quote
-    (yasnippet yaml-mode use-package tuareg smex smartparens scala-mode rainbow-delimiters railscasts-theme popwin markdown-mode init-loader ido-vertical-mode ido-ubiquitous htmlize geiser exec-path-from-shell evil-surround evil-numbers elixir-mode company-ghc cider ac-slime ac-racer))))
+    (bison-mode yasnippet yaml-mode use-package tuareg smex smartparens scala-mode rainbow-delimiters railscasts-theme popwin markdown-mode init-loader ido-vertical-mode ido-ubiquitous htmlize geiser exec-path-from-shell evil-surround evil-numbers elixir-mode company-ghc cider ac-slime ac-racer))))
 (put 'upcase-region 'disabled nil)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

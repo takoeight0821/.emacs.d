@@ -1,6 +1,6 @@
 (require-or-install 'elixir-mode)
 (require-or-install 'alchemist)
-(require-or-install 'ac-alchemist)
+;;(require-or-install 'ac-alchemist)
 
 
 (sp-with-modes '(elixir-mode)
@@ -12,7 +12,8 @@
                  :post-handlers '(sp-ruby-def-post-handler)
                  :actions '(insert navigate)))
 
-(add-hook 'elixir-mode-hook 'ac-alchemist-setup)
-(add-hook 'alchemist-iex-mode-hook 'ac-alchemist-setup)
+(add-hook 'elixir-mode-hook '(lambda () (auto-complete-mode 0)))
+(add-hook 'elixir-mode-hook 'company-mode)
+(add-hook 'alchemist-iex-mode-hook 'elixir-mode)
 (add-hook 'alchemist-mix-mode-hook 'evil-insert-state)
 (define-key alchemist-iex-mode-map (kbd "T") nil)

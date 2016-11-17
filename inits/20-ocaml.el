@@ -1,24 +1,20 @@
-(unless (package-installed-p 'tuareg)
-  (package-install 'tuareg))
+(mapc #'package-bundle '(tuareg utop merlin))
 
-(add-to-list 'auto-mode-alist '("\\.ml[iylp]?" . tuareg-mode))
-(autoload 'tuareg-mode "tuareg" "Major mode for editing OCaml code" t)
-(autoload 'tuareg-run-ocaml "tuareg" "Run an inferior OCaml process." t)
-(autoload 'ocamldebug "ocamldebug" "Run the OCaml debugger" t)
+(add-hook 'tuareg-mode-hook 'tuareg-imenu-set-imenu)
+(setq auto-mode-alist
+      (append '(("\\.ml[ily]?$" . tuareg-mode)
+                ("\\.topml$" . tuareg-mode))
+              auto-mode-alist)) 
+(autoload 'utop-setup-ocaml-buffer "utop" "Toplevel for OCaml" t)
+(add-hook 'tuareg-mode-hook 'utop-setup-ocaml-buffer)
+(add-hook 'tuareg-mode-hook 'merlin-mode)
+(setq merlin-use-auto-complete-mode t)
+(setq merlin-error-after-save nil)
 
-;; Add opam emacs directory to the load-path
-(setq opam-share (substring (shell-command-to-string "opam config var share 2> /dev/null") 0 -1))
-(add-to-list 'load-path (concat opam-share "/emacs/site-lisp"))
+(setq tuareg-electric-indent -1)
+(setq tuareg-in-indent 0)
+(setq tuareg-use-smie nil)
+(setq tuareg-with-indent 0)
 
-;; Load merlin-mode
-(require 'merlin)
-;; Start merlin on ocaml files
-(add-hook 'tuareg-mode-hook 'merlin-mode t)
-(add-hook 'caml-mode-hook 'merlin-mode t)
-
-(add-hook 'tuareg-interactive-mode-hook 'evil-insert-state)
-
-;; Enable auto-complete
-(setq merlin-ac-setup 'easy)
-;; Use opam switch to lookup ocamlmerlin binary
-(setq merlin-command 'opam)
+(setq opam-share (substring (shell-command-to-string "opam config var share") 0 -1))
+(require 'ocp-indent)

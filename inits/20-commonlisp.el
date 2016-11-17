@@ -3,7 +3,7 @@
 ;; (require-or-install 'slime)
 (require-or-install 'ac-slime)
 
-(require 'slime-autoloads)
+;; (require 'slime-autoloads)
 
 (setq inferior-lisp-program "ros -Q run")
 
@@ -59,9 +59,9 @@
               (slime-repl-set-package :cl21-user)
               (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
 
-(add-hook 'lisp-mode-hook 'rainbow-delimiters-mode)
+;; (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'lisp-mode-hook #'turn-on-smartparens-strict-mode)
-(add-hook 'slime-lisp-mode-hook 'rainbow-delimiters-mode)
-(add-hook 'slime-repl-mode-hook 'rainbow-delimiters-mode)
+;; (add-hook 'slime-lisp-mode-hook 'rainbow-delimiters-mode)
+;; (add-hook 'slime-repl-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'slime-repl-mode-hook #'turn-on-smartparens-strict-mode)
 (add-hook 'slime-repl-mode-hook 'ansi-color-for-comint-mode-on)
