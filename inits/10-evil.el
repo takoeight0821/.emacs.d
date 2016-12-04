@@ -27,4 +27,9 @@
 (eval-after-load "esh-module"
   '(setq eshell-modules-list (delq 'eshell-ls (delq 'eshell-unix eshell-modules-list))))
 
+(eval-after-load "slime"
+  '(progn
+     (define-key evil-normal-state-map (kbd "M-.") 'slime-edit-definition)
+     (define-key evil-normal-state-map (kbd "M-,") 'slime-pop-find-definition-stack)))
+
 (evil-mode)

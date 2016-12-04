@@ -17,7 +17,7 @@
             (linum-mode 0)
             (define-key slime-repl-mode-map (kbd "C-n") 'slime-repl-newline-and-indent)
             (define-key slime-repl-mode-map (kbd "C-j") 'next-line)
-            (define-key slime-repl-mode-map (kbd "M-r") 'helm-for-files)))
+            ))
 (setq slime-autodoc-use-multiline-p t)
 
 (setq slime-contribs

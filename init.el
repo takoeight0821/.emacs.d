@@ -49,6 +49,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-ghc-show-info t)
+ '(custom-safe-themes
+   (quote
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "4e753673a37c71b07e3026be75dc6af3efbac5ce335f3707b7d6a110ecb636a3" "0c3b1358ea01895e56d1c0193f72559449462e5952bded28c81a8e09b53f103f" "d96587ec2c7bf278269b8ec2b800c7d9af9e22d816827639b332b0e613314dfd" "b3bcf1b12ef2a7606c7697d71b934ca0bdd495d52f901e73ce008c4c9825a3aa" "c39ae5721fce3a07a27a685c08e4b856a13780dbc755a569bb4393c932f226d7" default)))
  '(haskell-interactive-popup-errors nil)
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
@@ -65,5 +68,5 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ido-vertical-first-match-face ((t (:underline (:inherit ido-first-match)))))
- '(proof-locked-face ((t (:background "gray30"))))
+ '(proof-locked-face ((t (:background "gray20"))))
  '(proof-queue-face ((((type x) (class color) (background dark)) (:background "darksalmon")))))

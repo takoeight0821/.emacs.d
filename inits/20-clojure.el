@@ -1,4 +1,3 @@
-
 (package-bundle 'clojure-mode)
 
 (use-package clojure-mode

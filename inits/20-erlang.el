@@ -2,3 +2,4 @@
 (setq erlang-root "/usr/local/Cellar/erlang/19.1/lib/erlang")
 (setq exec-path (cons "/usr/local/bin" exec-path))
 (require 'erlang-start)
+(add-hook 'erlang-mode-hook 'auto-complete-mode)

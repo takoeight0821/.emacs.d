@@ -37,10 +37,6 @@
 
 (require-or-install 'htmlize)
 
-(require 'server)
-(unless (server-running-p)
-  (server-start))
-
 (make-local-variable 'before-save-hook)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 

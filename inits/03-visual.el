@@ -7,9 +7,9 @@
       eol-mnemonic-mac "(CR)"
       eol-mnemonic-unix "(LF)")
 
-(when window-system
-  ;; (tool-bar-mode -1)
-  (toggle-scroll-bar nil))
+;; (when window-system
+;;   ;; (tool-bar-mode -1)
+;;   (toggle-scroll-bar nil))
 
 ;;
 ;; Japanese font
@@ -34,9 +34,10 @@
 (set-face-attribute 'default nil :family "Migu 1M" :height 180)
 
 ;; color-theme
-(require-or-install 'railscasts-theme)
-
-
+(package-bundle 'railscasts-theme)
+(package-bundle 'spacemacs-theme)
+(package-bundle 'zenburn-theme)
+(package-bundle 'jazz-theme)
 (load-theme 'railscasts t nil)
 (setq frame-background-mode 'dark)
 
