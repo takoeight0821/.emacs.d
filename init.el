@@ -143,7 +143,8 @@
       eol-mnemonic-mac "(CR)"
       eol-mnemonic-unix "(LF)")
 
-(set-face-attribute 'default nil :family "Migu 1M" :height 180)
+(set-face-attribute 'default nil :family "Migu 1M" :height (cond ((mac-os-p) 180)
+                                                                 (t 160)))
 
 (package-bundle 'railscasts-theme)
 (package-bundle 'spacemacs-theme)
@@ -431,37 +432,38 @@
                                                     ("* ||\n[i]" "RET")))
 
 
-(load-file (let ((coding-system-for-read 'utf-8))
-             (shell-command-to-string "agda-mode locate")))
+;; (load-file (let ((coding-system-for-read 'utf-8))
+;;              (shell-command-to-string "agda-mode locate")))
 
-(package-bundle 'clojure-mode)
-(package-bundle 'cider)
+(when (mac-os-p)
+  (package-bundle 'clojure-mode)
+  (package-bundle 'cider)
 
-(use-package clojure-mode
-  :config
-  (add-hook 'clojure-mode #'yas-minor-mode)
-  (add-hook 'clojure-mode #'subword-mode)
-  (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode))
+  (use-package clojure-mode
+    :config
+    (add-hook 'clojure-mode #'yas-minor-mode)
+    (add-hook 'clojure-mode #'subword-mode)
+    (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode))
 
-(use-package cider
-  :config
-  (add-hook 'cider-mode-hook #'(lambda ()
-                                 ;; (auto-complete-mode 0)
-                                 (company-mode t)))
-  (add-hook 'cider-mode-hook #'eldoc-mode)
-  (add-hook 'cider-repl-mode-hook #'(lambda ()
-                                      ;; (auto-complete-mode 0)
-                                      (company-mode t)))
-  (add-hook 'cider-repl-mode-hook #'turn-on-smartparens-strict-mode)
-  (add-hook 'cider-repl-mode-hook #'eldoc-mode)
-  (add-hook 'cider-repl-mode-hook #'evil-insert-state)
-  (setq nrepl-log-messages nil
-        cider-repl-display-in-current-window nil
-        cider-repl-use-clojure-font-lock t
-        cider-prompt-save-file-on-load 'always-save
-        cider-font-lock-dynamically '(macro core function var)
-        cider-overlays-use-font-lock t
-        cider-repl-display-help-banner nil))
+  (use-package cider
+    :config
+    (add-hook 'cider-mode-hook #'(lambda ()
+                                   ;; (auto-complete-mode 0)
+                                   (company-mode t)))
+    (add-hook 'cider-mode-hook #'eldoc-mode)
+    (add-hook 'cider-repl-mode-hook #'(lambda ()
+                                        ;; (auto-complete-mode 0)
+                                        (company-mode t)))
+    (add-hook 'cider-repl-mode-hook #'turn-on-smartparens-strict-mode)
+    (add-hook 'cider-repl-mode-hook #'eldoc-mode)
+    (add-hook 'cider-repl-mode-hook #'evil-insert-state)
+    (setq nrepl-log-messages nil
+          cider-repl-display-in-current-window nil
+          cider-repl-use-clojure-font-lock t
+          cider-prompt-save-file-on-load 'always-save
+          cider-font-lock-dynamically '(macro core function var)
+          cider-overlays-use-font-lock t
+          cider-repl-display-help-banner nil)))
 
 (load (expand-file-name "~/.roswell/helper.el"))
 ;; (require-or-install 'ac-slime)
@@ -479,23 +481,24 @@
               (slime-repl-set-package :cl21-user)
               (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
 
-(load "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site")
-(setf proof-splash-enable nil)
-(when (not window-system)
-  (setf proof-colour-locked t)
-  (setf overlay-arrow-string ""))
-(setf proof-follow-mode 'followdown)
-(add-hook 'proof-mode-hook
-  '(lambda ()
-     (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
-(setq coq-prog-name "coqtop")
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(proof-locked-face ((t (:background "gray20"))))
- '(proof-queue-face ((t (:background "brightred")))))
+(when (mac-os-p)
+  (load "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site")
+  (setf proof-splash-enable nil)
+  (when (not window-system)
+    (setf proof-colour-locked t)
+    (setf overlay-arrow-string ""))
+  (setf proof-follow-mode 'followdown)
+  (add-hook 'proof-mode-hook
+            '(lambda ()
+               (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
+  (setq coq-prog-name "coqtop")
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(proof-locked-face ((t (:background "gray20"))))
+   '(proof-queue-face ((t (:background "brightred"))))))
 
 (require-or-install 'elixir-mode)
 (require-or-install 'alchemist)
@@ -517,12 +520,13 @@
 (add-hook 'alchemist-mix-mode-hook 'evil-insert-state)
 (define-key alchemist-iex-mode-map (kbd "T") nil)
 
-(setq load-path (cons "/Users/konoyuya/erlang/19.2/lib/tools-2.9/emacs" load-path))
-(setq erlang-root "/Users/konoyuya/erlang/19.2/lib/erlang")
-(setq erlang-man-root-dir "/Users/konoyuya/erlang/19.2/lib/erlang/man")
-(setq exec-path (cons "/Users/konoyuya/erlang/19.2/bin" exec-path))
-(require 'erlang-start)
-(setq erlang-electric-commands '())
+(when (mac-os-p)
+  (setq load-path (cons "/Users/konoyuya/erlang/19.2/lib/tools-2.9/emacs" load-path))
+  (setq erlang-root "/Users/konoyuya/erlang/19.2/lib/erlang")
+  (setq erlang-man-root-dir "/Users/konoyuya/erlang/19.2/lib/erlang/man")
+  (setq exec-path (cons "/Users/konoyuya/erlang/19.2/bin" exec-path))
+  (require 'erlang-start)
+  (setq erlang-electric-commands '()))
 
 (mapc #'require-or-install
       '(haskell-mode ghc company-ghc))
@@ -573,7 +577,8 @@
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+(when (mac-os-p)
+  (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el"))
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 
 ;; (let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var" "share")))))
