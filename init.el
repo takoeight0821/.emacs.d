@@ -535,20 +535,13 @@
 (add-hook 'haskell-mode-hook 'rainbow-delimiters-mode)
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
  '(company-ghc-show-info t)
  '(haskell-interactive-popup-errors t)
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
  '(haskell-process-suggest-remove-import-lines t)
  '(haskell-process-type (quote stack-ghci))
- '(haskell-stylish-on-save t)
- '(package-selected-packages
-   (quote
-    (go-eldoc company-go go-mode zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode popwin paren-face package-utils noflet markdown-mode jazz-theme init-loader ido-vertical-mode hydra helm geiser flycheck evil-surround evil-numbers esup company-ghc cider alchemist ac-racer))))
+ '(haskell-stylish-on-save t))
 
 ;; (require 'haskell-cabal)
 

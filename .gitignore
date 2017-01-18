@@ -49,3 +49,4 @@ ido.last
 
 site-lisp/PG/
 distel/
+shell-env.el
