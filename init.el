@@ -50,8 +50,8 @@
 
 (require-or-install 'use-package)
 
-(setq use-package-always-ensure t)
-(setq use-package-verbose t)
+(setq-default use-package-always-ensure t)
+(setq-default use-package-verbose t)
 
 (prefer-coding-system 'utf-8)
 (setq inhibit-startup-message t)
@@ -66,7 +66,7 @@
 
 (setq echo-keystrokes 0.1)
 
-(setq x-select-enable-clipboard t)
+(setq-default x-select-enable-clipboard t)
 
 (when (mac-os-p)
   (defun copy-from-osx ()
@@ -132,7 +132,7 @@
 (show-paren-mode t)
 
 ;; (global-linum-mode 1)
-(setq linum-format "%4d ")
+(setq-default linum-format "%4d ")
 
 (setq eol-mnemonic-dos "(CRLF)"
       eol-mnemonic-mac "(CR)"
@@ -161,14 +161,18 @@
 (setq-default save-place t)
 
 (package-bundle 'flycheck)
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+(with-eval-after-load 'flycheck
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
 (require-or-install 'yasnippet)
 (yas-global-mode t)
 
 (require-or-install 'company)
-(setq company-idle-delay 0.1
-      company-minimum-prefix-length 2
-      company-selection-wrap-around t)
+(setq-default company-idle-delay 0.1
+              company-minimum-prefix-length 2
+              company-selection-wrap-around t)
 
 (defun add-company-backend (backend)
   (add-to-list 'company-backends backend))
@@ -214,7 +218,7 @@
 
 (defvar *autocompletion-mode* 'auto-complete)
 (defun autocompletion-with (mode)
-  (message "autocompletion called")
+  (message "autocompletion called with %s" mode)
   (auto-complete-mode -1)
   (company-mode -1)
   (if (eq mode 'company)
@@ -605,33 +609,6 @@
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
-;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(when (mac-os-p)
-  (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el"))
-;; ## end of OPAM user-setup addition for emacs / base ## keep this line
-
-;; (let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var" "share")))))
-;;   (when (and opam-share (file-directory-p opam-share))
-;;     (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
-;;     (autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
-;;     (autoload 'merlin-mode "merlin" nil t nil)
-;;     (add-hook 'tuareg-mode-hook 'merlin-mode t)
-;;     (add-hook 'caml-mode-hook 'merlin-mode t)
-
-;;     (setq auto-mode-alist
-;;           (append '(("\\.ml[ily]?$" . tuareg-mode)
-;;                     ("\\.topml$" . tuareg-mode))
-;;                   auto-mode-alist))
-
-;;     (setq tuareg-use-smie nil)
-;;     (require 'ocp-indent)
-
-;;     (setq merlin-report-warnings nil)
-;;     (require 'merlin-company)
-;;     ;; ;; Make company aware of merlin
-;;     ;; (with-eval-after-load 'company
-;;     ;;   (add-to-list 'company-backends 'merlin-company-backend))
-;;   ))
 
 (require-or-install 'geiser)
 (setq geiser-active-implementations '(racket chicken))
@@ -685,6 +662,9 @@
   (add-hook 'go-mode-hook (lambda () (autocompletion-with 'company)))
   (add-company-backend 'company-go)
   (add-hook 'before-save-hook 'gofmt-before-save))
+
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
