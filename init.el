@@ -53,11 +53,6 @@
 (setq use-package-always-ensure t)
 (setq use-package-verbose t)
 
-;; (require-or-install 'init-loader)
-;; (setq init-loader-show-log-after-init nil)
-;; (init-loader-load
-;;  (expand-file-name "inits/" user-emacs-directory))
-
 (prefer-coding-system 'utf-8)
 (setq inhibit-startup-message t)
 (setq initial-scratch-message "")
@@ -165,6 +160,8 @@
 (require 'saveplace)
 (setq-default save-place t)
 
+(package-bundle 'flycheck)
+
 (require-or-install 'yasnippet)
 (yas-global-mode t)
 
@@ -174,7 +171,7 @@
       company-selection-wrap-around t)
 
 (defun add-company-backend (backend)
-  (add-to-list 'company-backends (list backend 'company-dabbrev 'company-yasnippet)))
+  (add-to-list 'company-backends backend))
 
 (global-set-key (kbd "C-M-i") 'company-complete)
 
@@ -208,7 +205,27 @@
 (set-face-attribute 'company-scrollbar-bg nil
                     :background "gray40")
 ;; (global-set-key "\t" 'company-indent-or-complete-common)
-(add-hook 'after-init-hook 'global-company-mode)
+
+(require-or-install 'auto-complete)
+(ac-config-default)
+
+(auto-complete-mode -1)
+(company-mode -1)
+
+(defvar *autocompletion-mode* 'auto-complete)
+(defun autocompletion-with (mode)
+  (message "autocompletion called")
+  (auto-complete-mode -1)
+  (company-mode -1)
+  (if (eq mode 'company)
+      (progn (auto-complete-mode -1)
+             (company-mode 1)
+             (setq *autocompletion-mode* 'company))
+    (progn (company-mode -1)
+           (auto-complete-mode 1)
+           (setq *autocompletion-mode* 'auto-complete))))
+
+(add-hook 'after-init-hook  '(lambda () (autocompletion-with *autocompletion-mode*)))
 
 (mapc #'package-bundle
       '(esup noflet))
@@ -274,7 +291,7 @@
 (package-bundle 'smartparens)
 (require 'smartparens-config)
 (require 'bind-key)
-(smartparens-global-mode 1)
+(smartparens-global-strict-mode t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybinding management
@@ -448,12 +465,11 @@
   (use-package cider
     :config
     (add-hook 'cider-mode-hook #'(lambda ()
-                                   ;; (auto-complete-mode 0)
-                                   (company-mode t)))
+                                   (autocompletion-with 'company)
+                                   ))
     (add-hook 'cider-mode-hook #'eldoc-mode)
     (add-hook 'cider-repl-mode-hook #'(lambda ()
-                                        ;; (auto-complete-mode 0)
-                                        (company-mode t)))
+                                        (autocompletion-with 'company)))
     (add-hook 'cider-repl-mode-hook #'turn-on-smartparens-strict-mode)
     (add-hook 'cider-repl-mode-hook #'eldoc-mode)
     (add-hook 'cider-repl-mode-hook #'evil-insert-state)
@@ -466,17 +482,28 @@
           cider-repl-display-help-banner nil)))
 
 (load (expand-file-name "~/.roswell/helper.el"))
-;; (require-or-install 'ac-slime)
-(package-bundle 'slime-company)
-(slime-setup '(slime-fancy slime-company))
+
+(when (eq *autocompletion-mode* 'auto-complete)
+  (require-or-install 'ac-slime)
+  (add-hook 'slime-mode-hook 'set-up-slime-ac)
+  (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+  (eval-after-load "auto-complete"
+    '(add-to-list 'ac-modes 'slime-repl-mode))
+  (slime-setup '(slime-fancy)))
+
+(when (eq *autocompletion-mode* 'company)
+  (package-bundle 'slime-company)
+  (slime-setup '(slime-fancy slime-company)))
+
+(unless (or (eq *autocompletion-mode* 'auto-complete) (eq *autocompletion-mode* 'company))
+  (slime-setup '(slime-fancy)))
+
 (setq inferior-lisp-program "ros -Q run")
 
 (add-hook 'lisp-mode-hook 'smartparens-strict-mode)
 ;; cl21
 (add-hook 'slime-connected-hook
           (lambda ()
-            (slime-company-disable)
-            (add-company-backend 'company-slime)
             (when (slime-eval `(cl:if (cl:find-package :cl21-user) t))
               (slime-repl-set-package :cl21-user)
               (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
@@ -514,8 +541,7 @@
                  :post-handlers '(sp-ruby-def-post-handler)
                  :actions '(insert navigate)))
 
-;; (add-hook 'elixir-mode-hook '(lambda () (auto-complete-mode 0)))
-(add-hook 'elixir-mode-hook 'company-mode)
+(add-hook 'elixir-mode-hook (lambda () (autocompletion-with 'company)))
 (add-hook 'alchemist-iex-mode-hook 'elixir-mode)
 (add-hook 'alchemist-mix-mode-hook 'evil-insert-state)
 (define-key alchemist-iex-mode-map (kbd "T") nil)
@@ -528,20 +554,30 @@
   (require 'erlang-start)
   (setq erlang-electric-commands '()))
 
+(when (linuxp)
+  (setq load-path (cons "/home/yuya/erlang/19.2/lib/tools-2.9/emacs" load-path))
+  (setq erlang-root "/home/yuya/erlang/19.2/lib/erlang")
+  (setq erlang-man-root-dir "/home/yuya/erlang/19.2/lib/erlang/man")
+  (setq exec-path (cons "/home/yuya/erlang/19.2/bin" exec-path))
+  (require 'erlang-start)
+  (setq erlang-electric-commands '())
+  )
+
 (mapc #'require-or-install
       '(haskell-mode ghc company-ghc))
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook 'rainbow-delimiters-mode)
 
-(custom-set-variables
- '(company-ghc-show-info t)
- '(haskell-interactive-popup-errors t)
- '(haskell-process-auto-import-loaded-modules t)
- '(haskell-process-log t)
- '(haskell-process-suggest-remove-import-lines t)
- '(haskell-process-type (quote stack-ghci))
- '(haskell-stylish-on-save t))
+(setq
+ company-ghc-show-info t
+ haskell-interactive-popup-errors t
+ haskell-process-auto-import-loaded-modules t
+ haskell-process-log t
+ haskell-process-suggest-remove-import-lines t
+ haskell-process-type (quote stack-ghci)
+ haskell-stylish-on-save t
+ )
 
 ;; (require 'haskell-cabal)
 
@@ -550,7 +586,7 @@
 (add-hook 'haskell-mode-hook '(lambda () (ghc-init)))
 
 ;; (add-hook 'haskell-mode-hook '(lambda () (auto-complete-mode 0)))
-(add-hook 'haskell-mode-hook 'company-mode)
+(add-hook 'haskell-mode-hook (lambda () (autocompletion-with 'company)))
 (add-to-list 'company-backends '(company-ghc company-yasnippet company-dabbrev))
 
 (eval-after-load 'haskell-mode '(progn
@@ -623,7 +659,7 @@
 ;;; racerのeldocサポートを使う
 (add-hook 'racer-mode-hook #'eldoc-mode)
 ;;; racerの補完サポートを使う
-(add-hook 'racer-mode-hook #'company-mode)
+(add-hook 'racer-mode-hook (lambda () (autocompletion-with 'company)))
 
 (package-bundle 'scala-mode)
 
@@ -646,5 +682,20 @@
   (require-or-install 'company-go)
   (require-or-install 'go-eldoc)
   (add-hook 'go-mode-hook 'go-eldoc-setup)
+  (add-hook 'go-mode-hook (lambda () (autocompletion-with 'company)))
   (add-company-backend 'company-go)
   (add-hook 'before-save-hook 'gofmt-before-save))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
