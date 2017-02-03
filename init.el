@@ -25,11 +25,13 @@
       (normal-top-level-add-subdirs-to-load-path)))
 
 (require 'package)
-(setq package-archives
-      '(("gnu" . "http://elpa.gnu.org/packages/")
+(mapcar (lambda (pa) (add-to-list 'package-archives pa))
+      '(
+       ; ("gnu" . "http://elpa.gnu.org/packages/")
         ("melpa" . "http://melpa.org/packages/")
-        ("org" . "http://orgmode.org/elpa/")
-        ("marmalade" . "http://marmalade-repo.org/packages/")))
+        ;; ("org" . "http://orgmode.org/elpa/")
+       ; ("marmalade" . "http://marmalade-repo.org/packages/")
+       ))
 (package-initialize)
 
 (defun package-install-with-refresh (package)
@@ -161,7 +163,7 @@
 (setq-default save-place t)
 
 (package-bundle 'flycheck)
-(add-hook 'after-init-hook #'global-flycheck-mode)
+;; (add-hook 'after-init-hook #'global-flycheck-mode)
 
 (with-eval-after-load 'flycheck
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
@@ -212,9 +214,10 @@
 
 (require-or-install 'auto-complete)
 (ac-config-default)
-
+(define-key ac-completing-map (kbd "C-n") 'ac-next)
+(define-key ac-completing-map (kbd "C-p") 'ac-previous)
 (auto-complete-mode -1)
-(company-mode -1)
+(company-mode 1)
 
 (defvar *autocompletion-mode* 'auto-complete)
 (defun autocompletion-with (mode)
@@ -502,7 +505,7 @@
 (unless (or (eq *autocompletion-mode* 'auto-complete) (eq *autocompletion-mode* 'company))
   (slime-setup '(slime-fancy)))
 
-(setq inferior-lisp-program "ros -Q run")
+;; (setq inferior-lisp-program "ros -Q run")
 
 (add-hook 'lisp-mode-hook 'smartparens-strict-mode)
 ;; cl21
@@ -632,6 +635,8 @@
           (setq company-tooltip-align-annotations t)))
 ;;; rustのファイルを編集するときにracerとflycheckを起動する
 (add-hook 'rust-mode-hook (lambda ()
+                            (smartparens-strict-mode -1)
+                            (smartparens-mode 1)
                             (racer-mode)))
 ;;; racerのeldocサポートを使う
 (add-hook 'racer-mode-hook #'eldoc-mode)
@@ -664,12 +669,51 @@
   (add-hook 'before-save-hook 'gofmt-before-save))
 
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+(setq ocamlspot-command (concat (let ((reply (opam-shell-command-to-string "opam config var bin")))
+                                   (when reply (substring reply 0 -1)))
+                                "/ocamlspot"))
+(require 'ocamlspot)
+(add-hook 'tuareg-mode-hook
+  '(lambda ()
+    (local-set-key "\C-c;" 'ocamlspot-query)
+    (local-set-key "\C-c:" 'ocamlspot-query-interface)
+    (local-set-key "\C-c'" 'ocamlspot-query-uses)
+    (local-set-key "\C-c\C-t" 'ocamlspot-type)
+    (local-set-key "\C-c\C-i" 'ocamlspot-xtype)
+    (local-set-key "\C-c\C-y" 'ocamlspot-type-and-copy)
+    (local-set-key "\C-ct" 'caml-types-show-type)
+    (local-set-key "\C-cp" 'ocamlspot-pop-jump-stack)))
 
+(require-or-install 'd-mode)
+(require-or-install 'ac-dcd)
+
+(add-hook 'd-mode-hook
+      (lambda ()
+         (autocompletion-with 'auto-complete)
+         (when (featurep 'yasnippet) (yas-minor-mode-on))
+         (ac-dcd-maybe-start-server)
+         (ac-dcd-add-imports)
+         (add-to-list 'ac-sources 'ac-source-dcd)
+         (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
+         (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
+         (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
+         (define-key d-mode-map (kbd "C-c s") 'ac-dcd-search-symbol)
+
+         (when (featurep 'popwin)
+           (add-to-list 'popwin:special-display-config
+                        `(,ac-dcd-error-buffer-name :noselect t))
+           (add-to-list 'popwin:special-display-config
+                        `(,ac-dcd-document-buffer-name :position right :width 80))
+           (add-to-list 'popwin:special-display-config
+                        `(,ac-dcd-search-symbol-buffer-name :position bottom :width 5)))))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
     (ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist))))
