@@ -586,6 +586,7 @@
 (add-hook 'alchemist-mix-mode-hook 'evil-insert-state)
 (define-key alchemist-iex-mode-map (kbd "T") nil)
 
+;; TODO: $HOMEを使って指定する
 (when (mac-os-p)
   (setq load-path (cons "/Users/konoyuya/kerl/19.2/lib/tools-2.9/emacs" load-path))
   (setq erlang-root "/Users/konoyuya/kerl/19.2/lib/erlang")
@@ -705,17 +706,17 @@
 (setq ocamlspot-command (concat (let ((reply (opam-shell-command-to-string "opam config var bin")))
                                    (when reply (substring reply 0 -1)))
                                 "/ocamlspot"))
-(require 'ocamlspot)
-(add-hook 'tuareg-mode-hook
-  '(lambda ()
-    (local-set-key "\C-c;" 'ocamlspot-query)
-    (local-set-key "\C-c:" 'ocamlspot-query-interface)
-    (local-set-key "\C-c'" 'ocamlspot-query-uses)
-    (local-set-key "\C-c\C-t" 'ocamlspot-type)
-    (local-set-key "\C-c\C-i" 'ocamlspot-xtype)
-    (local-set-key "\C-c\C-y" 'ocamlspot-type-and-copy)
-    (local-set-key "\C-ct" 'caml-types-show-type)
-    (local-set-key "\C-cp" 'ocamlspot-pop-jump-stack)))
+;; (require 'ocamlspot)
+;; (add-hook 'tuareg-mode-hook
+;;   '(lambda ()
+;;     (local-set-key "\C-c;" 'ocamlspot-query)
+;;     (local-set-key "\C-c:" 'ocamlspot-query-interface)
+;;     (local-set-key "\C-c'" 'ocamlspot-query-uses)
+;;     (local-set-key "\C-c\C-t" 'ocamlspot-type)
+;;     (local-set-key "\C-c\C-i" 'ocamlspot-xtype)
+;;     (local-set-key "\C-c\C-y" 'ocamlspot-type-and-copy)
+;;     (local-set-key "\C-ct" 'caml-types-show-type)
+;;     (local-set-key "\C-cp" 'ocamlspot-pop-jump-stack)))
 
 (require-or-install 'd-mode)
 (require-or-install 'ac-dcd)
@@ -763,4 +764,5 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(proof-locked-face ((t (:background "gray20"))))
+ '(proof-queue-face ((t (:background "brightred")))))
