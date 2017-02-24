@@ -58,7 +58,7 @@
 (prefer-coding-system 'utf-8)
 (setq inhibit-startup-message t)
 (setq initial-scratch-message "")
-(setq initial-major-mode 'emacs-lisp-mode)
+(setq initial-major-mode 'lisp-mode)
 
 (setq-default tab-width 2
 	      indent-tabs-mode nil)
@@ -80,6 +80,37 @@
 	(process-send-eof proc))))
   (setq interprogram-paste-function 'copy-from-osx)
   (setq interprogram-cut-function 'paste-to-osx))
+
+(when (and (not window-system) (linuxp))
+  (when (getenv "DISPLAY")
+    (defun xclip-cut-function (text &optional push)
+      (with-temp-buffer
+        (insert text)
+        (call-process-region (point-min) (point-max) "xclip" nil 0 nil "-i" "-selection" "clipboard")))
+    (defun xclip-paste-function()
+      (let ((xclip-output (shell-command-to-string "xclip -o -selection clipboard")))
+        (unless (string= (car kill-ring) xclip-output)
+          xclip-output )))
+    (setq interprogram-cut-function 'xclip-cut-function)
+    (setq interprogram-paste-function 'xclip-paste-function))
+  (require 'mouse)
+  (xterm-mouse-mode t))
+
+(defun mouse-scroll-down ()
+  (interactive)
+  (scroll-down 1))
+(defun mouse-scroll-up ()
+  (interactive)
+  (scroll-up 1))
+
+(global-set-key [mouse-4] 'mouse-scroll-down)
+(global-set-key [mouse-5] 'mouse-scroll-up)
+
+(setq scroll-step 1)
+
+;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+;; (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 
 (setq-default require-final-newline nil)
 (setq require-final-newline nil)
@@ -140,8 +171,10 @@
       eol-mnemonic-mac "(CR)"
       eol-mnemonic-unix "(LF)")
 
-(set-face-attribute 'default nil :family "Migu 1M" :height (cond ((mac-os-p) 180)
-                                                                 (t 160)))
+(if (mac-os-p)
+    (set-face-attribute 'default nil :family "Migu 1M" :height (cond ((mac-os-p) 180)
+                                                                   (t 160)))
+  (set-face-attribute 'default nil :family "Inconsolata" :height 140))
 
 (package-bundle 'railscasts-theme)
 (package-bundle 'spacemacs-theme)
@@ -178,6 +211,7 @@
 
 (defun add-company-backend (backend)
   (add-to-list 'company-backends backend))
+(add-company-backend 'company-yasnippet)
 
 (global-set-key (kbd "C-M-i") 'company-complete)
 
@@ -291,6 +325,7 @@
                 ("*slime-compilation*" :noselect t)
                 ("*slime-xref*")
                 ("*cider-error*")
+                ("*GHC Error*")
                 (slime-connection-list-mode)
                 (slime-repl-mode)
                 (sldb-mode :height 20 :stick t))))
@@ -489,23 +524,21 @@
           cider-repl-display-help-banner nil)))
 
 (load (expand-file-name "~/.roswell/helper.el"))
+;; (when (eq *autocompletion-mode* 'auto-complete))
+(require-or-install 'ac-slime)
+(add-hook 'slime-mode-hook 'set-up-slime-ac)
+(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+(eval-after-load "auto-complete"
+  '(add-to-list 'ac-modes 'slime-repl-mode))
+;; (when (eq *autocompletion-mode* 'company)
+;;   (package-bundle 'slime-company)
+;;   (slime-setup '(slime-fancy slime-company)))
 
-(when (eq *autocompletion-mode* 'auto-complete)
-  (require-or-install 'ac-slime)
-  (add-hook 'slime-mode-hook 'set-up-slime-ac)
-  (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-  (eval-after-load "auto-complete"
-    '(add-to-list 'ac-modes 'slime-repl-mode))
-  (slime-setup '(slime-fancy)))
-
-(when (eq *autocompletion-mode* 'company)
-  (package-bundle 'slime-company)
-  (slime-setup '(slime-fancy slime-company)))
-
-(unless (or (eq *autocompletion-mode* 'auto-complete) (eq *autocompletion-mode* 'company))
-  (slime-setup '(slime-fancy)))
+;; (unless (or (eq *autocompletion-mode* 'auto-complete) (eq *autocompletion-mode* 'company))
+;;   (slime-setup '(slime-fancy))))
 
 ;; (setq inferior-lisp-program "ros -Q run")
+
 
 (add-hook 'lisp-mode-hook 'smartparens-strict-mode)
 ;; cl21
@@ -554,18 +587,18 @@
 (define-key alchemist-iex-mode-map (kbd "T") nil)
 
 (when (mac-os-p)
-  (setq load-path (cons "/Users/konoyuya/erlang/19.2/lib/tools-2.9/emacs" load-path))
-  (setq erlang-root "/Users/konoyuya/erlang/19.2/lib/erlang")
-  (setq erlang-man-root-dir "/Users/konoyuya/erlang/19.2/lib/erlang/man")
-  (setq exec-path (cons "/Users/konoyuya/erlang/19.2/bin" exec-path))
+  (setq load-path (cons "/Users/konoyuya/kerl/19.2/lib/tools-2.9/emacs" load-path))
+  (setq erlang-root "/Users/konoyuya/kerl/19.2/lib/erlang")
+  (setq erlang-man-root-dir "/Users/konoyuya/kerl/19.2/lib/erlang/man")
+  (setq exec-path (cons "/Users/konoyuya/kerl/19.2/bin" exec-path))
   (require 'erlang-start)
   (setq erlang-electric-commands '()))
 
 (when (linuxp)
-  (setq load-path (cons "/home/yuya/erlang/19.2/lib/tools-2.9/emacs" load-path))
-  (setq erlang-root "/home/yuya/erlang/19.2/lib/erlang")
-  (setq erlang-man-root-dir "/home/yuya/erlang/19.2/lib/erlang/man")
-  (setq exec-path (cons "/home/yuya/erlang/19.2/bin" exec-path))
+  (setq load-path (cons "/home/yuya/kerl/19.2/lib/tools-2.9/emacs" load-path))
+  (setq erlang-root "/home/yuya/kerl/19.2/lib/erlang")
+  (setq erlang-man-root-dir "/home/yuya/kerl/19.2/lib/erlang/man")
+  (setq exec-path (cons "/home/yuya/kerl/19.2/bin" exec-path))
   (require 'erlang-start)
   (setq erlang-electric-commands '())
   )
@@ -594,7 +627,7 @@
 
 ;; (add-hook 'haskell-mode-hook '(lambda () (auto-complete-mode 0)))
 (add-hook 'haskell-mode-hook (lambda () (autocompletion-with 'company)))
-(add-to-list 'company-backends '(company-ghc company-yasnippet company-dabbrev))
+(add-to-list 'company-backends 'company-ghc)
 
 (eval-after-load 'haskell-mode '(progn
   (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
@@ -706,6 +739,14 @@
                         `(,ac-dcd-document-buffer-name :position right :width 80))
            (add-to-list 'popwin:special-display-config
                         `(,ac-dcd-search-symbol-buffer-name :position bottom :width 5)))))
+
+(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+(add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
+(add-hook 'prolog-mode-hook (lambda () (autocompletion-with 'auto-complete)))
+
+(package-bundle 'ess)
+(require 'ess-site)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
