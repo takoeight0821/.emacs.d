@@ -333,7 +333,7 @@
 (package-bundle 'smartparens)
 (require 'smartparens-config)
 (require 'bind-key)
-(smartparens-global-strict-mode t)
+(add-hook 'emacs-lisp-mode-hook 'turn-on-smartparens-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; keybinding management
@@ -416,7 +416,7 @@
 
 (bind-key ";" 'sp-comment emacs-lisp-mode-map)
 
-(bind-key [remap c-electric-backspace] 'sp-backward-delete-char smartparens-strict-mode-map)
+(bind-key [remap c-electric-backspace] 'sp-backward-delete-char smartparens-mode-map)
 
 ;;;;;;;;;;;;;;;;;;
 ;; pair management
@@ -524,23 +524,24 @@
           cider-repl-display-help-banner nil)))
 
 (load (expand-file-name "~/.roswell/helper.el"))
-;; (when (eq *autocompletion-mode* 'auto-complete))
-(require-or-install 'ac-slime)
-(add-hook 'slime-mode-hook 'set-up-slime-ac)
-(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-(eval-after-load "auto-complete"
-  '(add-to-list 'ac-modes 'slime-repl-mode))
-;; (when (eq *autocompletion-mode* 'company)
-;;   (package-bundle 'slime-company)
-;;   (slime-setup '(slime-fancy slime-company)))
+(when (eq *autocompletion-mode* 'auto-complete)
+  (require-or-install 'ac-slime)
+  (add-hook 'slime-mode-hook 'set-up-slime-ac)
+  (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+  (eval-after-load "auto-complete"
+    '(add-to-list 'ac-modes 'slime-repl-mode)))
 
-;; (unless (or (eq *autocompletion-mode* 'auto-complete) (eq *autocompletion-mode* 'company))
-;;   (slime-setup '(slime-fancy))))
+(when (eq *autocompletion-mode* 'company)
+  (package-bundle 'slime-company)
+  (slime-setup '(slime-fancy slime-company)))
+
+(unless (or (eq *autocompletion-mode* 'auto-complete) (eq *autocompletion-mode* 'company))
+  (slime-setup '(slime-fancy)))
 
 ;; (setq inferior-lisp-program "ros -Q run")
 
 
-(add-hook 'lisp-mode-hook 'smartparens-strict-mode)
+(add-hook 'lisp-mode-hook 'turn-on-smartparens-strict-mode)
 ;; cl21
 (add-hook 'slime-connected-hook
           (lambda ()
@@ -668,10 +669,8 @@
   '(progn (setq-default rust-format-on-save t)
           (setq company-tooltip-align-annotations t)))
 ;;; rustのファイルを編集するときにracerとflycheckを起動する
-(add-hook 'rust-mode-hook (lambda ()
-                            (smartparens-strict-mode -1)
-                            (smartparens-mode 1)
-                            (racer-mode)))
+(add-hook 'rust-mode-hook #'racer)
+
 ;;; racerのeldocサポートを使う
 (add-hook 'racer-mode-hook #'eldoc-mode)
 ;;; racerの補完サポートを使う
