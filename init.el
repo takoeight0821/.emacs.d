@@ -549,24 +549,27 @@
               (slime-repl-set-package :cl21-user)
               (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
 
-(when (mac-os-p)
-  (load "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site")
-  (setf proof-splash-enable nil)
-  (when (not window-system)
-    (setf proof-colour-locked t)
-    (setf overlay-arrow-string ""))
-  (setf proof-follow-mode 'followdown)
-  (add-hook 'proof-mode-hook
-            '(lambda ()
-               (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
-  (setq coq-prog-name "coqtop")
-  (custom-set-faces
-   ;; custom-set-faces was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   '(proof-locked-face ((t (:background "gray20"))))
-   '(proof-queue-face ((t (:background "brightred"))))))
+;; (when (mac-os-p)
+;;   (autoload 'proof-mode "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site" nil t)
+;;     (add-hook 'proof-mode-hook
+;;               '(lambda ()
+;;                  (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
+;;     (add-hook 'proof-mode-hook
+;;               '(lambda ()
+;;                  (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
+;;     (setf proof-splash-enable nil)
+;;     (when (not window-system)
+;;       (setf proof-colour-locked t)
+;;       (setf overlay-arrow-string ""))
+;;     (setf proof-follow-mode 'followdown)
+;;     (setq coq-prog-name "coqtop")
+;;     (custom-set-faces
+;;      ;; custom-set-faces was added by Custom.
+;;      ;; If you edit it by hand, you could mess it up, so be careful.
+;;      ;; Your init file should contain only one such instance.
+;;      ;; If there is more than one, they won't work right.
+;;      '(proof-locked-face ((t (:background "gray20"))))
+;;      '(proof-queue-face ((t (:background "brightred"))))))
 
 (require-or-install 'elixir-mode)
 (require-or-install 'alchemist)
@@ -604,7 +607,6 @@
   (require 'erlang-start)
   (setq erlang-electric-commands '())
   )
-
 (mapc #'require-or-install
       '(haskell-mode ghc company-ghc))
 
@@ -701,11 +703,11 @@
   (add-company-backend 'company-go)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-(setq ocamlspot-command (concat (let ((reply (opam-shell-command-to-string "opam config var bin")))
-                                   (when reply (substring reply 0 -1)))
-                                "/ocamlspot"))
-;; (require 'ocamlspot)
+(when (not (mac-os-p))
+  (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+  (setq ocamlspot-command (concat (let ((reply (opam-shell-command-to-string "opam config var bin")))
+                                    (when reply (substring reply 0 -1)))
+                                  "/ocamlspot")))
 ;; (add-hook 'tuareg-mode-hook
 ;;   '(lambda ()
 ;;     (local-set-key "\C-c;" 'ocamlspot-query)
