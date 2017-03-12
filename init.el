@@ -523,7 +523,36 @@
           cider-overlays-use-font-lock t
           cider-repl-display-help-banner nil)))
 
-(load (expand-file-name "~/.roswell/helper.el"))
+;; (load (expand-file-name "~/.roswell/helper.el"))
+(defun roswell-configdir ()
+  (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
+
+(defun roswell-opt (var)
+  (with-temp-buffer
+    (insert-file-contents (concat (roswell-configdir) "config"))
+    (goto-char (point-min))
+    (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
+    (match-string 1)))
+
+(defun roswell-slime-directory ()
+  (concat
+   (roswell-configdir)
+   "lisp/slime/"
+   (roswell-opt "slime.version")
+   "/"))
+
+(defvar roswell-slime-contribs '(slime-fancy))
+
+(let* ((slime-directory (roswell-slime-directory)))
+  (add-to-list 'load-path slime-directory)
+  (require 'slime-autoloads)
+  (setq slime-backend (expand-file-name "swank-loader.lisp"
+                                        slime-directory))
+  (setq slime-path slime-directory)
+  (slime-setup roswell-slime-contribs))
+
+(setq inferior-lisp-program "ros run")
+
 (when (eq *autocompletion-mode* 'auto-complete)
   (require-or-install 'ac-slime)
   (add-hook 'slime-mode-hook 'set-up-slime-ac)
@@ -748,6 +777,9 @@
 
 (package-bundle 'ess)
 (require 'ess-site)
+(setq ess-use-auto-complete t)
+(add-hook 'julia-mode-hook #'(lambda () (autocompletion-with 'autocomplete)))
+(add-hook 'inferior-ess-mode-hook 'evil-insert-state)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
