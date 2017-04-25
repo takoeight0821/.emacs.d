@@ -784,6 +784,10 @@
 (add-hook 'inferior-ess-mode-hook 'evil-insert-state)
 
 (add-hook 'c-mode-hook 'turn-on-smartparens-mode)
+
+(add-hook 'after-init-hook 'electric-pair-mode)
+(add-hook 'after-init-hook 'electric-indent-mode)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
