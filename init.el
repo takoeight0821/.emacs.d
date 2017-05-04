@@ -333,6 +333,7 @@
 (package-bundle 'smartparens)
 (require 'smartparens-config)
 (require 'bind-key)
+(add-hook 'after-init-hook 'turn-on-smartparens-mode)
 (add-hook 'emacs-lisp-mode-hook 'turn-on-smartparens-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -724,6 +725,7 @@
   :bind ("C-m" . newline-and-indent))
 
 (require-or-install 'go-mode)
+(add-hook 'go-mode-hook 'smartparens-mode)
 (with-eval-after-load 'go-mode
   (require-or-install 'company-go)
   (require-or-install 'go-eldoc)
@@ -781,8 +783,14 @@
 (add-hook 'julia-mode-hook #'(lambda () (autocompletion-with 'autocomplete)))
 (add-hook 'inferior-ess-mode-hook 'evil-insert-state)
 
-(add-hook 'c++-mode-hook 'turn-on-smartparens-mode)
-(add-hook 'c++-mode-hook (lambda () (autocompletion-with 'auto-complete)))
+<<<<<<< HEAD
+=======
+(add-hook 'c-mode-hook 'turn-on-smartparens-mode)
+
+(add-hook 'after-init-hook 'electric-pair-mode)
+(add-hook 'after-init-hook 'electric-indent-mode)
+
+>>>>>>> 9a4d07c2d47eb92fd3722278b089e83a092ad55c
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
