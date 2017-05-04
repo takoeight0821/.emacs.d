@@ -495,34 +495,34 @@
 ;; (load-file (let ((coding-system-for-read 'utf-8))
 ;;              (shell-command-to-string "agda-mode locate")))
 
-(when (mac-os-p)
-  (package-bundle 'clojure-mode)
-  (package-bundle 'cider)
+;; (when (mac-os-p)
+;;   (package-bundle 'clojure-mode)
+;;   (package-bundle 'cider)
 
-  (use-package clojure-mode
-    :config
-    (add-hook 'clojure-mode #'yas-minor-mode)
-    (add-hook 'clojure-mode #'subword-mode)
-    (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode))
+;;   (use-package clojure-mode
+;;     :config
+;;     (add-hook 'clojure-mode #'yas-minor-mode)
+;;     (add-hook 'clojure-mode #'subword-mode)
+;;     (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode))
 
-  (use-package cider
-    :config
-    (add-hook 'cider-mode-hook #'(lambda ()
-                                   (autocompletion-with 'company)
-                                   ))
-    (add-hook 'cider-mode-hook #'eldoc-mode)
-    (add-hook 'cider-repl-mode-hook #'(lambda ()
-                                        (autocompletion-with 'company)))
-    (add-hook 'cider-repl-mode-hook #'turn-on-smartparens-strict-mode)
-    (add-hook 'cider-repl-mode-hook #'eldoc-mode)
-    (add-hook 'cider-repl-mode-hook #'evil-insert-state)
-    (setq nrepl-log-messages nil
-          cider-repl-display-in-current-window nil
-          cider-repl-use-clojure-font-lock t
-          cider-prompt-save-file-on-load 'always-save
-          cider-font-lock-dynamically '(macro core function var)
-          cider-overlays-use-font-lock t
-          cider-repl-display-help-banner nil)))
+;;   (use-package cider
+;;     :config
+;;     (add-hook 'cider-mode-hook #'(lambda ()
+;;                                    (autocompletion-with 'company)
+;;                                    ))
+;;     (add-hook 'cider-mode-hook #'eldoc-mode)
+;;     (add-hook 'cider-repl-mode-hook #'(lambda ()
+;;                                         (autocompletion-with 'company)))
+;;     (add-hook 'cider-repl-mode-hook #'turn-on-smartparens-strict-mode)
+;;     (add-hook 'cider-repl-mode-hook #'eldoc-mode)
+;;     (add-hook 'cider-repl-mode-hook #'evil-insert-state)
+;;     (setq nrepl-log-messages nil
+;;           cider-repl-display-in-current-window nil
+;;           cider-repl-use-clojure-font-lock t
+;;           cider-prompt-save-file-on-load 'always-save
+;;           cider-font-lock-dynamically '(macro core function var)
+;;           cider-overlays-use-font-lock t
+;;           cider-repl-display-help-banner nil)))
 
 ;; (load (expand-file-name "~/.roswell/helper.el"))
 (defun roswell-configdir ()
@@ -783,14 +783,11 @@
 (add-hook 'julia-mode-hook #'(lambda () (autocompletion-with 'autocomplete)))
 (add-hook 'inferior-ess-mode-hook 'evil-insert-state)
 
-<<<<<<< HEAD
-=======
 (add-hook 'c-mode-hook 'turn-on-smartparens-mode)
 
 (add-hook 'after-init-hook 'electric-pair-mode)
 (add-hook 'after-init-hook 'electric-indent-mode)
 
->>>>>>> 9a4d07c2d47eb92fd3722278b089e83a092ad55c
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
