@@ -25,7 +25,7 @@
       (normal-top-level-add-subdirs-to-load-path)))
 
 (require 'package)
-(mapcar (lambda (pa) (add-to-list 'package-archives pa))
+(mapc (lambda (pa) (add-to-list 'package-archives pa))
       '(
        ; ("gnu" . "http://elpa.gnu.org/packages/")
         ("melpa" . "http://melpa.org/packages/")
@@ -781,6 +781,8 @@
 (add-hook 'julia-mode-hook #'(lambda () (autocompletion-with 'autocomplete)))
 (add-hook 'inferior-ess-mode-hook 'evil-insert-state)
 
+(add-hook 'c++-mode-hook 'turn-on-smartparens-mode)
+(add-hook 'c++-mode-hook (lambda () (autocompletion-with 'auto-complete)))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
