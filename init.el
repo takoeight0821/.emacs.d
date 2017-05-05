@@ -621,13 +621,13 @@
 (define-key alchemist-iex-mode-map (kbd "T") nil)
 
 ;; TODO: $HOMEを使って指定する
-;(when (mac-os-p)
-;  (setq load-path (cons "/Users/konoyuya/kerl/19.2/lib/tools-2.9/emacs" load-path))
-;  (setq erlang-root "/Users/konoyuya/kerl/19.2/lib/erlang")
-;  (setq erlang-man-root-dir "/Users/konoyuya/kerl/19.2/lib/erlang/man")
-;  (setq exec-path (cons "/Users/konoyuya/kerl/19.2/bin" exec-path))
-;  (require 'erlang-start)
-;  (setq erlang-electric-commands '()))
+;; (when (mac-os-p)
+;;   (setq load-path (cons "/Users/konoyuya/kerl/19.2/lib/tools-2.9/emacs" load-path))
+;;   (setq erlang-root "/Users/konoyuya/kerl/19.2/lib/erlang")
+;;   (setq erlang-man-root-dir "/Users/konoyuya/kerl/19.2/lib/erlang/man")
+;;   (setq exec-path (cons "/Users/konoyuya/kerl/19.2/bin" exec-path))
+;;   (require 'erlang-start)
+;;   (setq erlang-electric-commands '()))
 
 (when (linuxp)
   (setq load-path (cons "/home/yuya/kerl/19.2/lib/tools-2.9/emacs" load-path))
