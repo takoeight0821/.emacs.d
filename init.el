@@ -202,7 +202,7 @@
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
 
 (require-or-install 'yasnippet)
-(yas-global-mode t)
+(yas-global-mode 1)
 
 (require-or-install 'company)
 (setq-default company-idle-delay 0.1
@@ -719,6 +719,10 @@
 
 (add-to-list 'auto-mode-alist '("\\.\\(sml\\|sig\\)\\'" . sml-mode))
 
+(add-hook 'sml-mode-hook 'turn-on-smartparens-mode)
+(add-hook 'sml-mode-hook 'electric-indent-mode)
+(add-hook 'sml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
+
 (package-bundle 'yaml-mode)
 (use-package yaml-mode
   :mode "\\.yml\\'"
@@ -734,11 +738,11 @@
   (add-company-backend 'company-go)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
-(when (not (mac-os-p))
-  (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-  (setq ocamlspot-command (concat (let ((reply (opam-shell-command-to-string "opam config var bin")))
-                                    (when reply (substring reply 0 -1)))
-                                  "/ocamlspot")))
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; (setq ocamlspot-command (concat (let ((reply (opam-shell-command-to-string "opam config var bin")))
+;;                                   (when reply (substring reply 0 -1)))
+;;                                 "/ocamlspot"))
+
 ;; (add-hook 'tuareg-mode-hook
 ;;   '(lambda ()
 ;;     (local-set-key "\C-c;" 'ocamlspot-query)
@@ -806,3 +810,7 @@
  ;; If there is more than one, they won't work right.
  '(proof-locked-face ((t (:background "gray20"))))
  '(proof-queue-face ((t (:background "brightred")))))
+
+;; ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+;; (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
