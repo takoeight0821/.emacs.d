@@ -509,14 +509,14 @@
 ;;   (require 'erlang-start)
 ;;   (setq erlang-electric-commands '()))
 
-(when (linuxp)
-  (setq load-path (cons "/home/yuya/kerl/19.2/lib/tools-2.9/emacs" load-path))
-  (setq erlang-root "/home/yuya/kerl/19.2/lib/erlang")
-  (setq erlang-man-root-dir "/home/yuya/kerl/19.2/lib/erlang/man")
-  (setq exec-path (cons "/home/yuya/kerl/19.2/bin" exec-path))
-  (require 'erlang-start)
-  (setq erlang-electric-commands '())
-  )
+;; (when (linuxp)
+;;   (setq load-path (cons "/home/yuya/kerl/19.2/lib/tools-2.9/emacs" load-path))
+;;   (setq erlang-root "/home/yuya/kerl/19.2/lib/erlang")
+;;   (setq erlang-man-root-dir "/home/yuya/kerl/19.2/lib/erlang/man")
+;;   (setq exec-path (cons "/home/yuya/kerl/19.2/bin" exec-path))
+;;   (require 'erlang-start)
+;;   (setq erlang-electric-commands '())
+;;   )
 (mapc #'require-or-install
       '(haskell-mode ghc hindent company-ghc intero))
 
@@ -620,21 +620,7 @@
   (add-company-backend 'company-go)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-;; (setq ocamlspot-command (concat (let ((reply (opam-shell-command-to-string "opam config var bin")))
-;;                                   (when reply (substring reply 0 -1)))
-;;                                 "/ocamlspot"))
-
-;; (add-hook 'tuareg-mode-hook
-;;   '(lambda ()
-;;     (local-set-key "\C-c;" 'ocamlspot-query)
-;;     (local-set-key "\C-c:" 'ocamlspot-query-interface)
-;;     (local-set-key "\C-c'" 'ocamlspot-query-uses)
-;;     (local-set-key "\C-c\C-t" 'ocamlspot-type)
-;;     (local-set-key "\C-c\C-i" 'ocamlspot-xtype)
-;;     (local-set-key "\C-c\C-y" 'ocamlspot-type-and-copy)
-;;     (local-set-key "\C-ct" 'caml-types-show-type)
-;;     (local-set-key "\C-cp" 'ocamlspot-pop-jump-stack)))
+(when (mac-os-p) (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el"))
 
 (require-or-install 'd-mode)
 (require-or-install 'ac-dcd)
