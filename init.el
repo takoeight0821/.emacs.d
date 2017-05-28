@@ -332,12 +332,8 @@
 
 (package-bundle 'smartparens)
 (require 'smartparens-config)
-(require 'bind-key)
+;; (require 'bind-key)
 (add-hook 'after-init-hook 'turn-on-smartparens-mode)
-(add-hook 'emacs-lisp-mode-hook 'turn-on-smartparens-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;
-;; keybinding management
 (define-key smartparens-mode-map (kbd "C-M-f") 'sp-forward-sexp)
 (define-key smartparens-mode-map (kbd "C-M-b") 'sp-backward-sexp)
 
@@ -375,122 +371,6 @@
 
 (define-key smartparens-mode-map (kbd "M-F") 'sp-forward-symbol)
 (define-key smartparens-mode-map (kbd "M-B") 'sp-backward-symbol)
-
-(bind-key "C-c f" (lambda () (interactive) (sp-beginning-of-sexp 2)) smartparens-mode-map)
-(bind-key "C-c b" (lambda () (interactive) (sp-beginning-of-sexp -2)) smartparens-mode-map)
-
-(require-or-install 'hydra)
-(bind-key "C-M-s"
-          (defhydra smartparens-hydra ()
-            "Smartparens"
-            ("d" sp-down-sexp "Down")
-            ("e" sp-up-sexp "Up")
-            ("u" sp-backward-up-sexp "Up")
-            ("a" sp-backward-down-sexp "Down")
-            ("f" sp-forward-sexp "Forward")
-            ("b" sp-backward-sexp "Backward")
-            ("k" sp-kill-sexp "Kill" :color blue)
-            ("q" nil "Quit" :color blue))
-          smartparens-mode-map)
-
-(bind-key "H-t" 'sp-prefix-tag-object smartparens-mode-map)
-(bind-key "H-p" 'sp-prefix-pair-object smartparens-mode-map)
-(bind-key "H-y" 'sp-prefix-symbol-object smartparens-mode-map)
-(bind-key "H-h" 'sp-highlight-current-sexp smartparens-mode-map)
-(bind-key "H-e" 'sp-prefix-save-excursion smartparens-mode-map)
-(bind-key "H-s c" 'sp-convolute-sexp smartparens-mode-map)
-(bind-key "H-s a" 'sp-absorb-sexp smartparens-mode-map)
-(bind-key "H-s e" 'sp-emit-sexp smartparens-mode-map)
-(bind-key "H-s p" 'sp-add-to-previous-sexp smartparens-mode-map)
-(bind-key "H-s n" 'sp-add-to-next-sexp smartparens-mode-map)
-(bind-key "H-s j" 'sp-join-sexp smartparens-mode-map)
-(bind-key "H-s s" 'sp-split-sexp smartparens-mode-map)
-(bind-key "H-s r" 'sp-rewrap-sexp smartparens-mode-map)
-(defvar hyp-s-x-map)
-(define-prefix-command 'hyp-s-x-map)
-(bind-key "H-s x" hyp-s-x-map smartparens-mode-map)
-(bind-key "H-s x x" 'sp-extract-before-sexp smartparens-mode-map)
-(bind-key "H-s x a" 'sp-extract-after-sexp smartparens-mode-map)
-(bind-key "H-s x s" 'sp-swap-enclosing-sexp smartparens-mode-map)
-
-(bind-key "C-x C-t" 'sp-transpose-hybrid-sexp smartparens-mode-map)
-
-(bind-key ";" 'sp-comment emacs-lisp-mode-map)
-
-(bind-key [remap c-electric-backspace] 'sp-backward-delete-char smartparens-mode-map)
-
-;;;;;;;;;;;;;;;;;;
-;; pair management
-
-(sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-(bind-key "C-(" 'sp---wrap-with-40 minibuffer-local-map)
-
-;;; markdown-mode
-(sp-with-modes '(markdown-mode gfm-mode rst-mode)
-  (sp-local-pair "*" "*"
-                 :wrap "C-*"
-                 :unless '(sp-point-after-word-p sp-point-at-bol-p)
-                 :post-handlers '(("[d1]" "SPC"))
-                 :skip-match 'sp--gfm-skip-asterisk)
-  (sp-local-pair "**" "**")
-  (sp-local-pair "_" "_" :wrap "C-_" :unless '(sp-point-after-word-p)))
-
-(defun sp--gfm-skip-asterisk (ms mb me)
-  (save-excursion
-    (goto-char mb)
-    (save-match-data (looking-at "^\\* "))))
-
-;;; org-mode
-(sp-with-modes 'org-mode
-  (sp-local-pair "*" "*" :actions '(insert wrap) :unless '(sp-point-after-word-p sp-point-at-bol-p) :wrap "C-*" :skip-match 'sp--org-skip-asterisk)
-  (sp-local-pair "_" "_" :unless '(sp-point-after-word-p) :wrap "C-_")
-  (sp-local-pair "/" "/" :unless '(sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
-  (sp-local-pair "~" "~" :unless '(sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
-  (sp-local-pair "=" "=" :unless '(sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
-  (sp-local-pair "«" "»"))
-
-(defun sp--org-skip-asterisk (ms mb me)
-  (or (and (= (line-beginning-position) mb)
-           (eq 32 (char-after (1+ mb))))
-      (and (= (1+ (line-beginning-position)) me)
-           (eq 32 (char-after me)))))
-
-;;; tex-mode latex-mode
-(sp-with-modes '(tex-mode plain-tex-mode latex-mode)
-  (sp-local-tag "i" "\"<" "\">"))
-
-;;; lisp modes
-(sp-with-modes sp--lisp-modes
-  (sp-local-pair "(" nil
-                 :wrap "C-("
-                 :pre-handlers '(my-add-space-before-sexp-insertion)
-                 :post-handlers '(my-add-space-after-sexp-insertion)))
-
-
-
-(defun my-add-space-after-sexp-insertion (id action _context)
-  (when (eq action 'insert)
-    (save-excursion
-      (forward-char (sp-get-pair id :cl-l))
-      (when (or (eq (char-syntax (following-char)) ?w)
-                (looking-at (sp--get-opening-regexp)))
-        (insert " ")))))
-
-(defun my-add-space-before-sexp-insertion (id action _context)
-  (when (eq action 'insert)
-    (save-excursion
-      (backward-char (length id))
-      (when (or (eq (char-syntax (preceding-char)) ?w)
-                (and (looking-back (sp--get-closing-regexp))
-                     (not (eq (char-syntax (preceding-char)) ?'))))
-        (insert " ")))))
-
-;;; C++
-(sp-with-modes '(malabar-mode c++-mode)
-  (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET"))))
-(sp-local-pair 'c++-mode "/*" "*/" :post-handlers '((" | " "SPC")
-                                                    ("* ||\n[i]" "RET")))
-
 
 ;; (load-file (let ((coding-system-for-read 'utf-8))
 ;;              (shell-command-to-string "agda-mode locate")))
@@ -638,10 +518,12 @@
   (setq erlang-electric-commands '())
   )
 (mapc #'require-or-install
-      '(haskell-mode ghc company-ghc))
+      '(haskell-mode ghc hindent company-ghc intero))
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'haskell-mode-hook 'intero-mode)
+(add-hook 'haskell-mode-hook 'hindent-mode)
 
 (setq
  company-ghc-show-info t
@@ -663,18 +545,18 @@
 (add-hook 'haskell-mode-hook (lambda () (autocompletion-with 'company)))
 (add-to-list 'company-backends 'company-ghc)
 
-(eval-after-load 'haskell-mode '(progn
-  (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-  (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-  (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
-  (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
-  (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
-  (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)))
-(eval-after-load 'haskell-cabal '(progn
-  (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-  (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-  (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
+;; (eval-after-load 'haskell-mode '(progn
+;;   (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
+;;   (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+;;   (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
+;;   (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
+;;   (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
+;;   (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)))
+;; (eval-after-load 'haskell-cabal '(progn
+;;   (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+;;   (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
+;;   (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
+;;   (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
 
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
@@ -781,16 +663,16 @@
 (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
 (add-hook 'prolog-mode-hook (lambda () (autocompletion-with 'auto-complete)))
 
-(package-bundle 'ess)
-(require 'ess-site)
-(setq ess-use-auto-complete t)
-(add-hook 'julia-mode-hook #'(lambda () (autocompletion-with 'autocomplete)))
-(add-hook 'inferior-ess-mode-hook 'evil-insert-state)
+;; (package-bundle 'ess)
+;; (require 'ess-site)
+;; (setq ess-use-auto-complete t)
+;; (add-hook 'julia-mode-hook #'(lambda () (autocompletion-with 'autocomplete)))
+;; (add-hook 'inferior-ess-mode-hook 'evil-insert-state)
 
 (add-hook 'c-mode-hook 'turn-on-smartparens-mode)
 
-(add-hook 'after-init-hook 'electric-pair-mode)
-(add-hook 'after-init-hook 'electric-indent-mode)
+;; (add-hook 'after-init-hook 'electric-pair-mode)
+;; (add-hook 'after-init-hook 'electric-indent-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -802,7 +684,7 @@
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist))))
+    (ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
