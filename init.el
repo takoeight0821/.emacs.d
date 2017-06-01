@@ -372,6 +372,7 @@
 (define-key smartparens-mode-map (kbd "M-F") 'sp-forward-symbol)
 (define-key smartparens-mode-map (kbd "M-B") 'sp-backward-symbol)
 
+(smartparens-global-mode t)
 ;; (load-file (let ((coding-system-for-read 'utf-8))
 ;;              (shell-command-to-string "agda-mode locate")))
 
@@ -500,12 +501,14 @@
 (add-hook 'alchemist-mix-mode-hook 'evil-insert-state)
 (define-key alchemist-iex-mode-map (kbd "T") nil)
 
-;; TODO: $HOMEを使って指定する
+(package-bundle 'erlang)
+(require 'erlang-start)
+(setq erlang-electric-commands '())
 ;; (when (mac-os-p)
-;;   (setq load-path (cons "/Users/konoyuya/kerl/19.2/lib/tools-2.9/emacs" load-path))
-;;   (setq erlang-root "/Users/konoyuya/kerl/19.2/lib/erlang")
-;;   (setq erlang-man-root-dir "/Users/konoyuya/kerl/19.2/lib/erlang/man")
-;;   (setq exec-path (cons "/Users/konoyuya/kerl/19.2/bin" exec-path))
+;;   (setq load-path (cons (expand-file-name "~/.kerl/19.3/lib/tools-2.9.1/emacs") load-path))
+;;   (setq erlang-root (expand-file-name "~/.kerl/19.3/lib/erlang"))
+;;   (setq erlang-man-root-dir (expand-file-name "~/.kerl/19.3/lib/erlang/man"))
+;;   (setq exec-path (cons (expand-file-name "~/.kerl/19.3/bin") exec-path))
 ;;   (require 'erlang-start)
 ;;   (setq erlang-electric-commands '()))
 
@@ -583,7 +586,7 @@
   '(progn (setq-default rust-format-on-save t)
           (setq company-tooltip-align-annotations t)))
 ;;; rustのファイルを編集するときにracerとflycheckを起動する
-(add-hook 'rust-mode-hook #'racer)
+(add-hook 'rust-mode-hook #'racer-mode)
 
 ;;; racerのeldocサポートを使う
 (add-hook 'racer-mode-hook #'eldoc-mode)
@@ -670,7 +673,7 @@
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist))))
+    (erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
