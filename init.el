@@ -658,7 +658,13 @@
 ;; (add-hook 'julia-mode-hook #'(lambda () (autocompletion-with 'autocomplete)))
 ;; (add-hook 'inferior-ess-mode-hook 'evil-insert-state)
 
-(add-hook 'c-mode-hook 'turn-on-smartparens-mode)
+(require-or-install 'cc-mode)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (turn-on-smartparens-mode)
+            (setq c-default-style "k&r")
+            (setq indent-tabs-mode nil)
+            (setq c-basic-offset 2)))
 
 ;; (add-hook 'after-init-hook 'electric-pair-mode)
 ;; (add-hook 'after-init-hook 'electric-indent-mode)
