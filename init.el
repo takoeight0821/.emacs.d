@@ -143,7 +143,7 @@
 (global-set-key (kbd "C-+") 'font-big)
 
 (define-prefix-command 'windmove-map)
-(global-set-key (kbd "C-q") 'windmove-map)
+(global-set-key (kbd "C-w") 'windmove-map)
 (define-key windmove-map "h" 'windmove-left)
 (define-key windmove-map "j" 'windmove-down)
 (define-key windmove-map "k" 'windmove-up)
@@ -164,7 +164,7 @@
 
 (show-paren-mode t)
 
-;; (global-linum-mode 1)
+(global-linum-mode 1)
 (setq-default linum-format "%4d ")
 
 (setq eol-mnemonic-dos "(CRLF)"
@@ -266,7 +266,7 @@
            (auto-complete-mode 1)
            (setq *autocompletion-mode* 'auto-complete))))
 
-(add-hook 'after-init-hook  '(lambda () (autocompletion-with *autocompletion-mode*)))
+;; (add-hook 'after-init-hook  '(lambda () (autocompletion-with *autocompletion-mode*)))
 
 (mapc #'package-bundle
       '(esup noflet))
@@ -373,67 +373,46 @@
 (define-key smartparens-mode-map (kbd "M-B") 'sp-backward-symbol)
 
 (smartparens-global-mode t)
+
+;;; C/C++
+(sp-with-modes '(c-mode malabar-mode c++-mode)
+  (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
+  (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
+                                            ("* ||\n[i]" "RET"))))
+
 ;; (load-file (let ((coding-system-for-read 'utf-8))
 ;;              (shell-command-to-string "agda-mode locate")))
 
-;; (when (mac-os-p)
-;;   (package-bundle 'clojure-mode)
-;;   (package-bundle 'cider)
+(when (mac-os-p)
+  (package-bundle 'clojure-mode)
+  (package-bundle 'cider)
 
-;;   (use-package clojure-mode
-;;     :config
-;;     (add-hook 'clojure-mode #'yas-minor-mode)
-;;     (add-hook 'clojure-mode #'subword-mode)
-;;     (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode))
+  (use-package clojure-mode
+    :config
+    (add-hook 'clojure-mode #'yas-minor-mode)
+    (add-hook 'clojure-mode #'subword-mode)
+    (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode))
 
-;;   (use-package cider
-;;     :config
-;;     (add-hook 'cider-mode-hook #'(lambda ()
-;;                                    (autocompletion-with 'company)
-;;                                    ))
-;;     (add-hook 'cider-mode-hook #'eldoc-mode)
-;;     (add-hook 'cider-repl-mode-hook #'(lambda ()
-;;                                         (autocompletion-with 'company)))
-;;     (add-hook 'cider-repl-mode-hook #'turn-on-smartparens-strict-mode)
-;;     (add-hook 'cider-repl-mode-hook #'eldoc-mode)
-;;     (add-hook 'cider-repl-mode-hook #'evil-insert-state)
-;;     (setq nrepl-log-messages nil
-;;           cider-repl-display-in-current-window nil
-;;           cider-repl-use-clojure-font-lock t
-;;           cider-prompt-save-file-on-load 'always-save
-;;           cider-font-lock-dynamically '(macro core function var)
-;;           cider-overlays-use-font-lock t
-;;           cider-repl-display-help-banner nil)))
+  (use-package cider
+    :config
+    (add-hook 'cider-mode-hook #'(lambda ()
+                                   (autocompletion-with 'company)
+                                   ))
+    (add-hook 'cider-mode-hook #'eldoc-mode)
+    (add-hook 'cider-repl-mode-hook #'(lambda ()
+                                        (autocompletion-with 'company)))
+    (add-hook 'cider-repl-mode-hook #'turn-on-smartparens-strict-mode)
+    (add-hook 'cider-repl-mode-hook #'eldoc-mode)
+    (add-hook 'cider-repl-mode-hook #'evil-insert-state)
+    (setq nrepl-log-messages nil
+          cider-repl-display-in-current-window nil
+          cider-repl-use-clojure-font-lock t
+          cider-save-file-on-load 'always-save
+          cider-font-lock-dynamically '(macro core function var)
+          cider-overlays-use-font-lock t
+          cider-repl-display-help-banner nil)))
 
-;; (load (expand-file-name "~/.roswell/helper.el"))
-(defun roswell-configdir ()
-  (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
-
-(defun roswell-opt (var)
-  (with-temp-buffer
-    (insert-file-contents (concat (roswell-configdir) "config"))
-    (goto-char (point-min))
-    (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
-    (match-string 1)))
-
-(defun roswell-slime-directory ()
-  (concat
-   (roswell-configdir)
-   "lisp/slime/"
-   (roswell-opt "slime.version")
-   "/"))
-
-(defvar roswell-slime-contribs '(slime-fancy))
-
-(let* ((slime-directory (roswell-slime-directory)))
-  (add-to-list 'load-path slime-directory)
-  (require 'slime-autoloads)
-  (setq slime-backend (expand-file-name "swank-loader.lisp"
-                                        slime-directory))
-  (setq slime-path slime-directory)
-  (slime-setup roswell-slime-contribs))
-
-(setq inferior-lisp-program "ros run")
+(load (expand-file-name "~/.roswell/helper.el"))
 
 (when (eq *autocompletion-mode* 'auto-complete)
   (require-or-install 'ac-slime)
@@ -486,7 +465,6 @@
 (require-or-install 'alchemist)
 ;;(require-or-install 'ac-alchemist)
 
-
 (sp-with-modes '(elixir-mode)
   (sp-local-pair "fn" "end"
                  :when '(("SPC" "RET"))
@@ -521,32 +499,34 @@
 ;;   (setq erlang-electric-commands '())
 ;;   )
 (mapc #'require-or-install
-      '(haskell-mode ghc hindent company-ghc intero))
+      '(haskell-mode hindent intero))
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook 'rainbow-delimiters-mode)
-(add-hook 'haskell-mode-hook 'intero-mode)
+(add-hook 'haskell-mode-hook (lambda ()
+                               (intero-mode)
+                               (autocompletion-with 'company)))
 (add-hook 'haskell-mode-hook 'hindent-mode)
 
 (setq
- company-ghc-show-info t
- haskell-interactive-popup-errors t
- haskell-process-auto-import-loaded-modules t
- haskell-process-log t
- haskell-process-suggest-remove-import-lines t
- haskell-process-type (quote stack-ghci)
+;;  company-ghc-show-info t
+;;  haskell-interactive-popup-errors t
+;;  haskell-process-auto-import-loaded-modules t
+;;  haskell-process-log t
+;;  haskell-process-suggest-remove-import-lines t
+;;  haskell-process-type (quote stack-ghci)
  haskell-stylish-on-save t
  )
 
 ;; (require 'haskell-cabal)
 
-(autoload 'ghc-init "stack ghc" nil t)
-(autoload 'ghc-debug "stack ghc" nil t)
-(add-hook 'haskell-mode-hook '(lambda () (ghc-init)))
+;; (autoload 'ghc-init "stack ghc" nil t)
+;; (autoload 'ghc-debug "stack ghc" nil t)
+;; (add-hook 'haskell-mode-hook '(lambda () (ghc-init)))
 
 ;; (add-hook 'haskell-mode-hook '(lambda () (auto-complete-mode 0)))
-(add-hook 'haskell-mode-hook (lambda () (autocompletion-with 'company)))
-(add-to-list 'company-backends 'company-ghc)
+;; (add-hook 'haskell-mode-hook (lambda () (autocompletion-with 'company)))
+;; (add-to-list 'company-backends 'company-ghc)
 
 ;; (eval-after-load 'haskell-mode '(progn
 ;;   (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
@@ -624,6 +604,7 @@
   (add-hook 'before-save-hook 'gofmt-before-save))
 
 (when (mac-os-p) (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el"))
+;; (add-hook 'ocaml-mode-hook (autocompletion-with 'autocomplete))
 
 (require-or-install 'd-mode)
 (require-or-install 'ac-dcd)
@@ -650,6 +631,8 @@
 
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
 (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
+(add-to-list 'auto-mode-alist '("\\.swi\\'" . prolog-mode))
+
 (add-hook 'prolog-mode-hook (lambda () (autocompletion-with 'auto-complete)))
 
 ;; (package-bundle 'ess)
@@ -662,12 +645,15 @@
 (add-hook 'c-mode-common-hook
           (lambda ()
             (turn-on-smartparens-mode)
+            (electric-indent-mode 1)
             (setq c-default-style "k&r")
             (setq indent-tabs-mode nil)
+            ;; (c-toggle-auto-newline 1)
             (setq c-basic-offset 2)))
 
-;; (add-hook 'after-init-hook 'electric-pair-mode)
-;; (add-hook 'after-init-hook 'electric-indent-mode)
+(require-or-install 'llvm-mode)
+
+(require 'carp-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -679,7 +665,7 @@
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist))))
+    (cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -687,7 +673,3 @@
  ;; If there is more than one, they won't work right.
  '(proof-locked-face ((t (:background "gray20"))))
  '(proof-queue-face ((t (:background "brightred")))))
-
-;; ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-;; (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-;; ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
