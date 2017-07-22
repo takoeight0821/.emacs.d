@@ -659,7 +659,8 @@
 
 (require-or-install 'llvm-mode)
 
-(require 'carp-mode)
+(when (mac-os-p)
+  (require 'carp-mode))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
