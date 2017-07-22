@@ -10,7 +10,8 @@
 
 (setq eval-expression-print-level nil)
 (setq max-lisp-eval-depth 10000)
-(setq gc-cons-threshold (* 10 gc-cons-threshold))
+(setq garbage-collection-messages t)
+(setq gc-cons-threshold (* 100 gc-cons-threshold))
 
 (display-time)
 
@@ -27,11 +28,11 @@
 (require 'package)
 (mapc (lambda (pa) (add-to-list 'package-archives pa))
       '(
-       ; ("gnu" . "http://elpa.gnu.org/packages/")
+        ;; ("gnu" . "http://elpa.gnu.org/packages/")
         ("melpa" . "http://melpa.org/packages/")
         ;; ("org" . "http://orgmode.org/elpa/")
-       ; ("marmalade" . "http://marmalade-repo.org/packages/")
-       ))
+        ;; ("marmalade" . "http://marmalade-repo.org/packages/")
+        ))
 (package-initialize)
 
 (defun package-install-with-refresh (package)
@@ -61,7 +62,7 @@
 (setq initial-major-mode 'lisp-mode)
 
 (setq-default tab-width 2
-	      indent-tabs-mode nil)
+              indent-tabs-mode nil)
 
 (setq use-dialog-box nil)
 (defalias 'message-box 'message)
@@ -76,8 +77,8 @@
   (defun paste-to-osx (text &optional push)
     (let ((process-connection-type nil))
       (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-	(process-send-string proc text)
-	(process-send-eof proc))))
+        (process-send-string proc text)
+        (process-send-eof proc))))
   (setq interprogram-paste-function 'copy-from-osx)
   (setq interprogram-cut-function 'paste-to-osx))
 
@@ -121,7 +122,7 @@
 (setq ring-bell-function 'ignore)
 
 (setq make-backup-files nil)
-(setq auto-save-default nil)
+(setq auto-save-default t)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
@@ -173,18 +174,18 @@
 
 (if (mac-os-p)
     (set-face-attribute 'default nil :family "Migu 1M" :height (cond ((mac-os-p) 180)
-                                                                   (t 160)))
+                                                                     (t 160)))
   (set-face-attribute 'default nil :family "Inconsolata" :height 140))
 
 (package-bundle 'railscasts-theme)
-(package-bundle 'spacemacs-theme)
-(package-bundle 'zenburn-theme)
-(package-bundle 'jazz-theme)
+;; (package-bundle 'spacemacs-theme)
+;; (package-bundle 'zenburn-theme)
+;; (package-bundle 'jazz-theme)
 ;; (load-theme 'spacemacs-dark t nil)
 (load-theme 'railscasts t nil)
 (setq frame-background-mode 'dark)
 
-(require-or-install 'rainbow-delimiters)
+;; (require-or-install 'rainbow-delimiters)
 ;; (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
@@ -192,8 +193,9 @@
 (require-or-install 'paren-face)
 (global-paren-face-mode t)
 
-(require 'saveplace)
-(setq-default save-place t)
+;; (require 'saveplace)
+;; (setq-default save-place t)
+(save-place-mode 1)
 
 (package-bundle 'flycheck)
 ;; (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -509,12 +511,12 @@
 (add-hook 'haskell-mode-hook 'hindent-mode)
 
 (setq
-;;  company-ghc-show-info t
-;;  haskell-interactive-popup-errors t
-;;  haskell-process-auto-import-loaded-modules t
-;;  haskell-process-log t
-;;  haskell-process-suggest-remove-import-lines t
-;;  haskell-process-type (quote stack-ghci)
+ ;;  company-ghc-show-info t
+ ;;  haskell-interactive-popup-errors t
+ ;;  haskell-process-auto-import-loaded-modules t
+ ;;  haskell-process-log t
+ ;;  haskell-process-suggest-remove-import-lines t
+ ;;  haskell-process-type (quote stack-ghci)
  haskell-stylish-on-save t
  )
 
@@ -544,7 +546,6 @@
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
-
 (require-or-install 'geiser)
 (setq geiser-active-implementations '(racket chicken))
 
@@ -552,6 +553,7 @@
 
 (add-hook 'racket-mode-hook
           (lambda ()
+            (autocompletion-with 'company)
             (define-key racket-mode-map (kbd "C-c r") 'racket-run)))
 
 (add-hook 'racket-mode-hook      #'racket-unicode-input-method-enable)
@@ -596,38 +598,42 @@
 (require-or-install 'go-mode)
 (add-hook 'go-mode-hook 'smartparens-mode)
 (with-eval-after-load 'go-mode
-  (require-or-install 'company-go)
   (require-or-install 'go-eldoc)
+  (require-or-install 'go-autocomplete)
+  (add-hook 'go-mode-hook (lambda () (autocompletion-with 'autocomplete)))
   (add-hook 'go-mode-hook 'go-eldoc-setup)
-  (add-hook 'go-mode-hook (lambda () (autocompletion-with 'company)))
-  (add-company-backend 'company-go)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
-(when (mac-os-p) (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el"))
-;; (add-hook 'ocaml-mode-hook (autocompletion-with 'autocomplete))
+(when (mac-os-p)
+  (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+  (with-eval-after-load 'company
+    (add-to-list 'company-backends 'merlin-company-backend))
+  )
+(add-hook 'ocaml-mode-hook (autocompletion-with 'autocomplete))
+
 
 (require-or-install 'd-mode)
 (require-or-install 'ac-dcd)
 
 (add-hook 'd-mode-hook
-      (lambda ()
-         (autocompletion-with 'auto-complete)
-         (when (featurep 'yasnippet) (yas-minor-mode-on))
-         (ac-dcd-maybe-start-server)
-         (ac-dcd-add-imports)
-         (add-to-list 'ac-sources 'ac-source-dcd)
-         (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
-         (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
-         (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
-         (define-key d-mode-map (kbd "C-c s") 'ac-dcd-search-symbol)
+          (lambda ()
+            (autocompletion-with 'auto-complete)
+            (when (featurep 'yasnippet) (yas-minor-mode-on))
+            (ac-dcd-maybe-start-server)
+            (ac-dcd-add-imports)
+            (add-to-list 'ac-sources 'ac-source-dcd)
+            (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
+            (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
+            (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
+            (define-key d-mode-map (kbd "C-c s") 'ac-dcd-search-symbol)
 
-         (when (featurep 'popwin)
-           (add-to-list 'popwin:special-display-config
-                        `(,ac-dcd-error-buffer-name :noselect t))
-           (add-to-list 'popwin:special-display-config
-                        `(,ac-dcd-document-buffer-name :position right :width 80))
-           (add-to-list 'popwin:special-display-config
-                        `(,ac-dcd-search-symbol-buffer-name :position bottom :width 5)))))
+            (when (featurep 'popwin)
+              (add-to-list 'popwin:special-display-config
+                           `(,ac-dcd-error-buffer-name :noselect t))
+              (add-to-list 'popwin:special-display-config
+                           `(,ac-dcd-document-buffer-name :position right :width 80))
+              (add-to-list 'popwin:special-display-config
+                           `(,ac-dcd-search-symbol-buffer-name :position bottom :width 5)))))
 
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
 (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
