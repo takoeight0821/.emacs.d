@@ -546,19 +546,6 @@
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
-(require-or-install 'geiser)
-(setq geiser-active-implementations '(racket chicken))
-
-(require-or-install 'racket-mode)
-
-(add-hook 'racket-mode-hook
-          (lambda ()
-            (autocompletion-with 'company)
-            (define-key racket-mode-map (kbd "C-c r") 'racket-run)))
-
-(add-hook 'racket-mode-hook      #'racket-unicode-input-method-enable)
-(add-hook 'racket-repl-mode-hook #'racket-unicode-input-method-enable)
-
 (package-bundle 'rust-mode)
 (require-or-install 'racer)
 ;;; racerやrustfmt、コンパイラにパスを通す
@@ -588,7 +575,7 @@
 
 (add-hook 'sml-mode-hook 'turn-on-smartparens-mode)
 (add-hook 'sml-mode-hook 'electric-indent-mode)
-(add-hook 'sml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
+(add-hook 'sml-mode-hook '(lambda () (autocompletion-with 'autocomplete)))
 
 (package-bundle 'yaml-mode)
 (use-package yaml-mode
@@ -600,16 +587,16 @@
 (with-eval-after-load 'go-mode
   (require-or-install 'go-eldoc)
   (require-or-install 'go-autocomplete)
-  (add-hook 'go-mode-hook (lambda () (autocompletion-with 'autocomplete)))
+  (add-hook 'go-mode-hook '(lambda () (autocompletion-with 'autocomplete)))
   (add-hook 'go-mode-hook 'go-eldoc-setup)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
 (when (mac-os-p)
   (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-  (with-eval-after-load 'company
-    (add-to-list 'company-backends 'merlin-company-backend))
+  ;; (with-eval-after-load 'company
+  ;;   (add-to-list 'company-backends 'merlin-company-backend))
   )
-(add-hook 'ocaml-mode-hook (autocompletion-with 'autocomplete))
+(add-hook 'ocaml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
 
 
 (require-or-install 'd-mode)
@@ -658,6 +645,20 @@
             (setq c-basic-offset 2)))
 
 (require-or-install 'llvm-mode)
+
+(require-or-install 'racket-mode)
+
+(add-hook 'racket-mode-hook
+          (lambda ()
+            (define-key racket-mode-map (kbd "C-c r") 'racket-run)))
+
+(add-hook 'racket-mode-hook      #'racket-unicode-input-method-enable)
+(add-hook 'racket-repl-mode-hook #'racket-unicode-input-method-enable)
+
+(require-or-install 'geiser)
+(setq geiser-active-implementations '(racket))
+
+(add-hook 'scheme-mode-hook (lambda () (autocompletion-with 'company)))
 
 (when (mac-os-p)
   (require 'carp-mode))
