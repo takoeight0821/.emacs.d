@@ -504,7 +504,7 @@
       '(haskell-mode hindent intero))
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-(add-hook 'haskell-mode-hook 'rainbow-delimiters-mode)
+;; (add-hook 'haskell-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'haskell-mode-hook (lambda ()
                                (intero-mode)
                                (autocompletion-with 'company)))
