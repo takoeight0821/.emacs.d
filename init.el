@@ -215,9 +215,9 @@
   (add-to-list 'company-backends backend))
 (add-company-backend 'company-yasnippet)
 
-(global-set-key (kbd "C-M-i") 'company-complete)
+;; (global-set-key (kbd "C-M-i") 'company-complete)
 
-;; C-n, C-pで補完候補を次/前の候補を選択
+;; c-n, C-pで補完候補を次/前の候補を選択
 (define-key company-active-map (kbd "C-n") 'company-select-next)
 (define-key company-active-map (kbd "C-p") 'company-select-previous)
 (define-key company-search-map (kbd "C-n") 'company-select-next)
@@ -662,6 +662,16 @@
 
 (when (mac-os-p)
   (require 'carp-mode))
+
+(package-bundle 'idris-mode)
+(push 'idris-compiler-notes-mode
+      popwin:special-display-config)
+(push '(idris-repl-mode
+        :height 0.2
+        :noselect nil
+        :position bottom
+        :stick t)
+      popwin:special-display-config)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
