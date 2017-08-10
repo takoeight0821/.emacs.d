@@ -441,27 +441,29 @@
               (slime-repl-set-package :cl21-user)
               (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
 
-;; (when (mac-os-p)
-;;   (autoload 'proof-mode "/usr/local/share/emacs/site-lisp/proof-general/generic/proof-site" nil t)
-;;     (add-hook 'proof-mode-hook
-;;               '(lambda ()
-;;                  (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
-;;     (add-hook 'proof-mode-hook
-;;               '(lambda ()
-;;                  (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
-;;     (setf proof-splash-enable nil)
-;;     (when (not window-system)
-;;       (setf proof-colour-locked t)
-;;       (setf overlay-arrow-string ""))
-;;     (setf proof-follow-mode 'followdown)
-;;     (setq coq-prog-name "coqtop")
-;;     (custom-set-faces
-;;      ;; custom-set-faces was added by Custom.
-;;      ;; If you edit it by hand, you could mess it up, so be careful.
-;;      ;; Your init file should contain only one such instance.
-;;      ;; If there is more than one, they won't work right.
-;;      '(proof-locked-face ((t (:background "gray20"))))
-;;      '(proof-queue-face ((t (:background "brightred"))))))
+(when (mac-os-p)
+  (load "~/.emacs.d/site-lisp/PG/generic/proof-site")
+  (add-hook 'proof-mode-hook
+            '(lambda ()
+               (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
+  (add-hook 'proof-mode-hook
+            '(lambda ()
+               (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
+  (setf proof-splash-enable nil)
+  (when (not window-system)
+    (setf proof-colour-locked t)
+    (setf overlay-arrow-string ""))
+  (setf proof-follow-mode 'followdown)
+  (setq coq-prog-name "coqtop")
+  (setq proof-three-window-mode-policy 'hybrid)
+
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(proof-locked-face ((t (:background "gray20"))))
+   '(proof-queue-face ((t (:background "brightred"))))))
 
 (require-or-install 'elixir-mode)
 (require-or-install 'alchemist)
@@ -673,7 +675,18 @@
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist))))
+    (cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
+ '(safe-local-variable-values
+   (quote
+    ((coq-prog-args "-emacs" "-R" "/Users/yuya/dev/src/local/cpdt/src" "Cpdt")
+     (coq-prog-args "-emacs" "-R" "~/dev/src/local/cpdt/src" "Cpdt")
+     (coq-prog-args "-emacs" "-R" "src" "Cpdt")
+     (coq-prog-args "-emacs" "-R" "./src" "Cpdt")
+     (coq-prog-args "-emacs-U" "-R"
+                    (expand-file-name "./src")
+                    "Cpdt")
+     (coq-prog-args "-emacs-U" "-R" "src" "Cpdt")
+     (coq-prog-args "-emacs-U" "-R" "./src" "Cpdt")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
