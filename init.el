@@ -688,7 +688,21 @@
     (cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
  '(safe-local-variable-values
    (quote
-    ((coq-prog-args "-emacs" "-R" "/Users/yuya/dev/src/local/cpdt/src" "Cpdt")
+    ((eval setq coq-prog-args
+           (\`
+            ("-emacs" "-R"
+             (\,
+              (concat
+               (let
+                   ((d
+                     (dir-locals-find-file "./src")))
+                 (if
+                     (stringp d)
+                     d
+                   (car d)))
+               "/src"))
+             "Cpdt")))
+     (coq-prog-args "-emacs" "-R" "/Users/yuya/dev/src/local/cpdt/src" "Cpdt")
      (coq-prog-args "-emacs" "-R" "~/dev/src/local/cpdt/src" "Cpdt")
      (coq-prog-args "-emacs" "-R" "src" "Cpdt")
      (coq-prog-args "-emacs" "-R" "./src" "Cpdt")
@@ -697,10 +711,3 @@
                     "Cpdt")
      (coq-prog-args "-emacs-U" "-R" "src" "Cpdt")
      (coq-prog-args "-emacs-U" "-R" "./src" "Cpdt")))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(proof-locked-face ((t (:background "gray20"))))
- '(proof-queue-face ((t (:background "brightred")))))
