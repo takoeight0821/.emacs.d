@@ -697,10 +697,3 @@
                     "Cpdt")
      (coq-prog-args "-emacs-U" "-R" "src" "Cpdt")
      (coq-prog-args "-emacs-U" "-R" "./src" "Cpdt")))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(proof-locked-face ((t (:background "gray20"))))
- '(proof-queue-face ((t (:background "brightred")))))
