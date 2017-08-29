@@ -593,11 +593,11 @@
   (add-hook 'go-mode-hook 'go-eldoc-setup)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
-(when (mac-os-p)
-  (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-  ;; (with-eval-after-load 'company
-  ;;   (add-to-list 'company-backends 'merlin-company-backend))
-  )
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; (with-eval-after-load 'company
+;;   (add-to-list 'company-backends 'merlin-company-backend))
+
+;; (add-to-list 'auto-mode-alist '("\\.ml\\'" . caml-mode))
 (add-hook 'ocaml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
 
 
