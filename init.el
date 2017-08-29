@@ -593,7 +593,6 @@
   (add-hook 'go-mode-hook 'go-eldoc-setup)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; (with-eval-after-load 'company
 ;;   (add-to-list 'company-backends 'merlin-company-backend))
 
@@ -711,3 +710,6 @@
                     "Cpdt")
      (coq-prog-args "-emacs-U" "-R" "src" "Cpdt")
      (coq-prog-args "-emacs-U" "-R" "./src" "Cpdt")))))
+;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; ## end of OPAM user-setup addition for emacs / base ## keep this line
