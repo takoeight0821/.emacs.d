@@ -674,6 +674,15 @@
         :stick t)
       popwin:special-display-config)
 
+(require-or-install 'nim-mode)
+(setq nim-nimsuggest-path "~/nim-0.17.0/bin/nimsuggest")
+
+(add-hook 'nim-mode-hook 'nimsuggest-mode)
+
+(add-hook 'nim-mode-hook (lambda () (autocompletion-with 'company)))
+
+(add-hook 'nimscript-mode-hook (lambda () (autocompletion-with 'company)))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
