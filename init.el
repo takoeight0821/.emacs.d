@@ -11,7 +11,7 @@
 (setq eval-expression-print-level nil)
 (setq max-lisp-eval-depth 10000)
 (setq garbage-collection-messages t)
-(setq gc-cons-threshold (* 100 gc-cons-threshold))
+(setq gc-cons-threshold (* 10 gc-cons-threshold))
 
 (display-time)
 
