@@ -8,6 +8,7 @@
 (defun linuxp ()
   (eq system-type 'gnu/linux))
 
+(set-language-environment "Japanese")
 (setq eval-expression-print-level nil)
 (setq max-lisp-eval-depth 10000)
 (setq garbage-collection-messages t)
