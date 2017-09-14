@@ -696,29 +696,7 @@
     (cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
  '(safe-local-variable-values
    (quote
-    ((eval setq coq-prog-args
-           (\`
-            ("-emacs" "-R"
-             (\,
-              (concat
-               (let
-                   ((d
-                     (dir-locals-find-file "./src")))
-                 (if
-                     (stringp d)
-                     d
-                   (car d)))
-               "/src"))
-             "Cpdt")))
-     (coq-prog-args "-emacs" "-R" "/Users/yuya/dev/src/local/cpdt/src" "Cpdt")
-     (coq-prog-args "-emacs" "-R" "~/dev/src/local/cpdt/src" "Cpdt")
-     (coq-prog-args "-emacs" "-R" "src" "Cpdt")
-     (coq-prog-args "-emacs" "-R" "./src" "Cpdt")
-     (coq-prog-args "-emacs-U" "-R"
-                    (expand-file-name "./src")
-                    "Cpdt")
-     (coq-prog-args "-emacs-U" "-R" "src" "Cpdt")
-     (coq-prog-args "-emacs-U" "-R" "./src" "Cpdt")))))
+    ((coq-prog-args "-emacs" "-R" "/Users/yuya/Desktop/cpdt/src" "Cpdt")))))
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
