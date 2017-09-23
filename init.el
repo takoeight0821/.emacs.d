@@ -141,6 +141,7 @@
   (set-face-attribute 'default nil :height
                       (- (face-attribute 'default :height) 10)))
 
+
 (global-set-key (kbd "C--") 'font-small)
 (global-set-key (kbd "C-+") 'font-big)
 
@@ -174,8 +175,7 @@
       eol-mnemonic-unix "(LF)")
 
 (if (mac-os-p)
-    (set-face-attribute 'default nil :family "Migu 1M" :height (cond ((mac-os-p) 180)
-                                                                     (t 160)))
+    (set-face-attribute 'default nil :family "Source Han Code JP N" :height 160)
   (set-face-attribute 'default nil :family "Inconsolata" :height 140))
 
 (package-bundle 'railscasts-theme)
@@ -199,10 +199,12 @@
 (save-place-mode 1)
 
 (package-bundle 'flycheck)
+(package-bundle 'flycheck-popup-tip)
 ;; (add-hook 'after-init-hook #'global-flycheck-mode)
 
 (with-eval-after-load 'flycheck
-  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+  (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
 
 (require-or-install 'yasnippet)
 (yas-global-mode 1)
@@ -508,9 +510,9 @@
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 ;; (add-hook 'haskell-mode-hook 'rainbow-delimiters-mode)
-(add-hook 'haskell-mode-hook (lambda ()
-                               (intero-mode)
-                               (autocompletion-with 'company)))
+(add-hook 'haskell-mode-hook '(lambda ()
+                                (intero-mode)
+                                (autocompletion-with 'company)))
 (add-hook 'haskell-mode-hook 'hindent-mode)
 
 (setq
