@@ -1,5 +1,5 @@
-(eval-when-compile
-  (require 'cl))
+;; (eval-when-compile)
+(require 'cl)
 
 (defun windowsp ()
   (eq system-type 'windows-nt))
@@ -12,7 +12,8 @@
 (setq eval-expression-print-level nil)
 (setq max-lisp-eval-depth 10000)
 (setq garbage-collection-messages t)
-(setq gc-cons-threshold (* 100 gc-cons-threshold))
+(setq gc-cons-threshold (* 200 gc-cons-threshold))
+(setq split-width-threshold 90)
 
 (display-time)
 
@@ -27,13 +28,17 @@
       (normal-top-level-add-subdirs-to-load-path)))
 
 (require 'package)
-(mapc (lambda (pa) (add-to-list 'package-archives pa))
-      '(
-        ;; ("gnu" . "http://elpa.gnu.org/packages/")
-        ("melpa" . "http://melpa.org/packages/")
-        ;; ("org" . "http://orgmode.org/elpa/")
-        ;; ("marmalade" . "http://marmalade-repo.org/packages/")
-        ))
+;; MELPAを追加
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+
+;; MELPA-stableを追加
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
+;; Marmaladeを追加
+(add-to-list 'package-archives  '("marmalade" . "http://marmalade-repo.org/packages/") t)
+
+;; Orgを追加
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 
 (defun package-install-with-refresh (package)
@@ -175,7 +180,7 @@
       eol-mnemonic-unix "(LF)")
 
 (if (mac-os-p)
-    (set-face-attribute 'default nil :family "Source Han Code JP N" :height 160)
+    (set-face-attribute 'default nil :family "Source Han Code JP L" :height 140 :weight 'light)
   (set-face-attribute 'default nil :family "Inconsolata" :height 140))
 
 (package-bundle 'railscasts-theme)
@@ -330,7 +335,7 @@
                 ("*slime-compilation*" :noselect t)
                 ("*slime-xref*")
                 ("*cider-error*")
-                ("*GHC Error*")
+                ;; ("*GHC Error*")
                 (slime-connection-list-mode)
                 (slime-repl-mode)
                 (sldb-mode :height 20 :stick t))))
@@ -393,12 +398,14 @@
   (package-bundle 'cider)
 
   (use-package clojure-mode
+    :defer t
     :config
     (add-hook 'clojure-mode #'yas-minor-mode)
     (add-hook 'clojure-mode #'subword-mode)
     (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode))
 
   (use-package cider
+    :defer t
     :config
     (add-hook 'cider-mode-hook #'(lambda ()
                                    (autocompletion-with 'company)
@@ -506,47 +513,45 @@
 ;;   (setq erlang-electric-commands '())
 ;;   )
 (mapc #'require-or-install
-      '(haskell-mode hindent intero))
+      '(haskell-mode flycheck-haskell hindent ghc company-ghc))
 
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;; (add-hook 'haskell-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'haskell-mode-hook '(lambda ()
-                                (intero-mode)
-                                (autocompletion-with 'company)))
+                                ;; (intero-mode)
+                                (autocompletion-with 'company)
+                                ))
+
+(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+;; (add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
+;; (add-hook 'haskell-mode-hook 'haskell-doc-mode)
+(add-to-list 'company-backends 'company-ghc)
+
 (add-hook 'haskell-mode-hook 'hindent-mode)
 
+(add-hook 'haskell-mode-hook 'flycheck-mode)
+
+(setq haskell-process-type 'stack-ghci)
+(setq haskell-process-path-ghci "stack")
+(setq haskell-process-args-ghci "ghci")
+
 (setq
- ;;  company-ghc-show-info t
- ;;  haskell-interactive-popup-errors t
- ;;  haskell-process-auto-import-loaded-modules t
- ;;  haskell-process-log t
- ;;  haskell-process-suggest-remove-import-lines t
- ;;  haskell-process-type (quote stack-ghci)
- haskell-stylish-on-save t
+  ;; company-ghc-show-info t
+  ghc-display-error nil
+  haskell-interactive-popup-errors nil
+  haskell-interactive-mode-read-only nil
+  haskell-interactive-prompt-read-only nil
+  haskell-process-auto-import-loaded-modules t
+  haskell-process-log t
+  haskell-process-suggest-remove-import-lines t
+  haskell-process-type (quote stack-ghci)
+  haskell-stylish-on-save t
  )
 
-;; (require 'haskell-cabal)
+(autoload 'ghc-init "ghc" nil t)
+(autoload 'ghc-debug "ghc" nil t)
+(add-hook 'haskell-mode-hook '(lambda () (ghc-init)))
 
-;; (autoload 'ghc-init "stack ghc" nil t)
-;; (autoload 'ghc-debug "stack ghc" nil t)
-;; (add-hook 'haskell-mode-hook '(lambda () (ghc-init)))
-
-;; (add-hook 'haskell-mode-hook '(lambda () (auto-complete-mode 0)))
-;; (add-hook 'haskell-mode-hook (lambda () (autocompletion-with 'company)))
-;; (add-to-list 'company-backends 'company-ghc)
-
-;; (eval-after-load 'haskell-mode '(progn
-;;   (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
-;;   (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-;;   (define-key haskell-mode-map (kbd "C-c C-n C-t") 'haskell-process-do-type)
-;;   (define-key haskell-mode-map (kbd "C-c C-n C-i") 'haskell-process-do-info)
-;;   (define-key haskell-mode-map (kbd "C-c C-n C-c") 'haskell-process-cabal-build)
-;;   (define-key haskell-mode-map (kbd "C-c C-n c") 'haskell-process-cabal)))
-;; (eval-after-load 'haskell-cabal '(progn
-;;   (define-key haskell-cabal-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-;;   (define-key haskell-cabal-mode-map (kbd "C-c C-k") 'haskell-interactive-mode-clear)
-;;   (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-;;   (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
+(evil-set-initial-state 'haskell-interactive-mode 'insert)
 
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
