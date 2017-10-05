@@ -563,7 +563,8 @@
 
 (autoload 'ghc-init "ghc" nil t)
 (autoload 'ghc-debug "ghc" nil t)
-(add-hook 'haskell-mode-hook '(lambda () (ghc-init)))
+;; (add-hook 'haskell-mode-hook '(lambda () (ghc-init)))
+(add-hook 'haskell-mode-hook '(lambda () (ghc-comp-init)))
 
 (evil-set-initial-state 'haskell-interactive-mode 'insert)
 
