@@ -183,12 +183,24 @@
     (set-face-attribute 'default nil :family "Source Han Code JP L" :height 140 :weight 'light)
   (set-face-attribute 'default nil :family "Inconsolata" :height 140))
 
-(package-bundle 'railscasts-theme)
-;; (package-bundle 'spacemacs-theme)
-;; (package-bundle 'zenburn-theme)
-;; (package-bundle 'jazz-theme)
+(package-bundle 'base16-theme)
+;; (package-bundle 'railscasts-theme)
+(package-bundle 'spacemacs-theme)
+(package-bundle 'zenburn-theme)
+(package-bundle 'jazz-theme)
 ;; (load-theme 'spacemacs-dark t nil)
+
 (load-theme 'railscasts t nil)
+;; (load-theme 'base16-railscasts t nil)
+;; (with-eval-after-load 'evil
+;;   ;; Set the cursor color based on the evil state
+;;   (defvar my/base16-colors base16-railscasts-colors)
+;;   (setq evil-emacs-state-cursor   `(,(plist-get my/base16-colors :base0D) box)
+;;         evil-insert-state-cursor  `(,(plist-get my/base16-colors :base0D) bar)
+;;         evil-motion-state-cursor  `(,(plist-get my/base16-colors :base0E) box)
+;;         evil-normal-state-cursor  `(,(plist-get my/base16-colors :base0B) box)
+;;         evil-replace-state-cursor `(,(plist-get my/base16-colors :base08) bar)
+;;         evil-visual-state-cursor  `(,(plist-get my/base16-colors :base09) box)))
 (setq frame-background-mode 'dark)
 
 ;; (require-or-install 'rainbow-delimiters)
@@ -529,6 +541,8 @@
 (add-hook 'haskell-mode-hook 'hindent-mode)
 
 (add-hook 'haskell-mode-hook 'flycheck-mode)
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
 
 (setq haskell-process-type 'stack-ghci)
 (setq haskell-process-path-ghci "stack")
@@ -698,7 +712,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+    ("3b0a350918ee819dca209cec62d867678d7dac74f6195f5e3799aa206358a983" "d3a7eea7ebc9a82b42c47e49517f7a1454116487f6907cf2f5c2df4b09b50fc1" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "6145e62774a589c074a31a05dfa5efdf8789cf869104e905956f0cbd7eda9d0e" "1263771faf6967879c3ab8b577c6c31020222ac6d3bac31f331a74275385a452" "eae831de756bb480240479794e85f1da0789c6f2f7746e5cc999370bbc8d9c8a" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
     (cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
