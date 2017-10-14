@@ -459,7 +459,7 @@
               (slime-repl-set-package :cl21-user)
               (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
 
-;; (when (mac-os-p))
+(when (mac-os-p)
 (load "~/.emacs.d/site-lisp/PG/generic/proof-site")
 (add-hook 'proof-mode-hook
           '(lambda ()
@@ -474,7 +474,7 @@
 (setf proof-follow-mode 'followdown)
 (setq coq-prog-name "coqtop")
 (setq proof-three-window-mode-policy 'hybrid)
-
+)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
