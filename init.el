@@ -227,9 +227,7 @@
               company-minimum-prefix-length 2
               company-selection-wrap-around t)
 
-(defun add-company-backend (backend)
-  (add-to-list 'company-backends backend))
-(add-company-backend 'company-yasnippet)
+(add-to-list 'company-backends '(company-yasnippet company-capf company-dabbrev))
 
 ;; (global-set-key (kbd "C-M-i") 'company-complete)
 
@@ -581,13 +579,14 @@
 ;;; racerのeldocサポートを使う
 (add-hook 'racer-mode-hook #'eldoc-mode)
 
-(package-bundle 'ac-racer)
+;; (package-bundle 'ac-racer)
 
-;;; racerの補完サポートを使う
-(add-hook 'racer-mode-hook (lambda ()
-                             (autocompletion-with 'auto-complete)
-                             (ac-racer-setup)))
-;; (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+;; ;;; racerの補完サポートを使う
+;; (add-hook 'racer-mode-hook (lambda ()
+;;                              (autocompletion-with 'auto-complete)
+;;                              (ac-racer-setup)))
+(add-hook 'racer-mode-hook #'(lambda () (autocompletion-with 'company)))
+;; ;; (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
 ;; (setq company-tooltip-align-annotations t)
 
 (package-bundle 'scala-mode)
@@ -723,6 +722,9 @@
  '(safe-local-variable-values
    (quote
     ((coq-prog-args "-emacs" "-R" "/Users/yuya/Desktop/cpdt/src" "Cpdt")))))
+
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+
+(add-to-list 'company-backends 'company-capf)
