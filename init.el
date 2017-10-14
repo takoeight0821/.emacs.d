@@ -115,10 +115,6 @@
 
 (setq scroll-step 1)
 
-;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-;; (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-
 (setq-default require-final-newline nil)
 (setq require-final-newline nil)
 
@@ -584,8 +580,15 @@
 
 ;;; racerのeldocサポートを使う
 (add-hook 'racer-mode-hook #'eldoc-mode)
+
+(package-bundle 'ac-racer)
+
 ;;; racerの補完サポートを使う
-(add-hook 'racer-mode-hook (lambda () (autocompletion-with 'company)))
+(add-hook 'racer-mode-hook (lambda ()
+                             (autocompletion-with 'auto-complete)
+                             (ac-racer-setup)))
+;; (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+;; (setq company-tooltip-align-annotations t)
 
 (package-bundle 'scala-mode)
 
