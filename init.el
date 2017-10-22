@@ -115,10 +115,6 @@
 
 (setq scroll-step 1)
 
-;; (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-;; (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-;; (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-
 (setq-default require-final-newline nil)
 (setq require-final-newline nil)
 
@@ -234,9 +230,7 @@
               company-minimum-prefix-length 2
               company-selection-wrap-around t)
 
-(defun add-company-backend (backend)
-  (add-to-list 'company-backends backend))
-(add-company-backend 'company-yasnippet)
+(add-to-list 'company-backends '(company-yasnippet company-capf company-dabbrev))
 
 ;; (global-set-key (kbd "C-M-i") 'company-complete)
 
@@ -466,7 +460,7 @@
               (slime-repl-set-package :cl21-user)
               (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
 
-;; (when (mac-os-p))
+(when (mac-os-p)
 (load "~/.emacs.d/site-lisp/PG/generic/proof-site")
 (add-hook 'proof-mode-hook
           '(lambda ()
@@ -481,7 +475,7 @@
 (setf proof-follow-mode 'followdown)
 (setq coq-prog-name "coqtop")
 (setq proof-three-window-mode-policy 'hybrid)
-
+)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -587,8 +581,16 @@
 
 ;;; racerのeldocサポートを使う
 (add-hook 'racer-mode-hook #'eldoc-mode)
-;;; racerの補完サポートを使う
-(add-hook 'racer-mode-hook (lambda () (autocompletion-with 'company)))
+
+;; (package-bundle 'ac-racer)
+
+;; ;;; racerの補完サポートを使う
+;; (add-hook 'racer-mode-hook (lambda ()
+;;                              (autocompletion-with 'auto-complete)
+;;                              (ac-racer-setup)))
+(add-hook 'racer-mode-hook #'(lambda () (autocompletion-with 'company)))
+;; ;; (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+;; (setq company-tooltip-align-annotations t)
 
 (package-bundle 'scala-mode)
 
@@ -723,6 +725,9 @@
  '(safe-local-variable-values
    (quote
     ((coq-prog-args "-emacs" "-R" "/Users/yuya/Desktop/cpdt/src" "Cpdt")))))
+
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+
+(add-to-list 'company-backends 'company-capf)
