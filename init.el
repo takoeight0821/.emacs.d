@@ -12,7 +12,7 @@
 (setq eval-expression-print-level nil)
 (setq max-lisp-eval-depth 10000)
 (setq garbage-collection-messages t)
-(setq gc-cons-threshold (* 200 gc-cons-threshold))
+(setq gc-cons-threshold (* 10 gc-cons-threshold))
 (setq split-width-threshold 90)
 
 (display-time)
@@ -173,6 +173,9 @@
 (show-paren-mode t)
 
 (global-linum-mode 1)
+(setq linum-delay t)
+(defadvice linum-schedule (around my-linum-schedule () activate)
+  (run-with-idle-timer 0.2 nil #'linum-update-current))
 (setq-default linum-format "%4d ")
 
 (setq eol-mnemonic-dos "(CRLF)"
@@ -184,7 +187,7 @@
   (set-face-attribute 'default nil :family "Inconsolata" :height 140))
 
 (package-bundle 'base16-theme)
-;; (package-bundle 'railscasts-theme)
+(package-bundle 'railscasts-theme)
 (package-bundle 'spacemacs-theme)
 (package-bundle 'zenburn-theme)
 (package-bundle 'jazz-theme)
