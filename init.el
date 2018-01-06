@@ -1,5 +1,5 @@
-;; (eval-when-compile)
-(require 'cl)
+(eval-when-compile
+  (require 'cl))
 
 (defun windowsp ()
   (eq system-type 'windows-nt))
@@ -11,8 +11,8 @@
 (set-language-environment "Japanese")
 (setq eval-expression-print-level nil)
 (setq max-lisp-eval-depth 10000)
-(setq garbage-collection-messages t)
-(setq gc-cons-threshold (* 10 gc-cons-threshold))
+;; (setq garbage-collection-messages t)
+(setq gc-cons-threshold (* 100 gc-cons-threshold))
 (setq split-width-threshold 90)
 
 (display-time)
@@ -65,7 +65,7 @@
 (prefer-coding-system 'utf-8)
 (setq inhibit-startup-message t)
 (setq initial-scratch-message "")
-(setq initial-major-mode 'lisp-mode)
+(setq initial-major-mode 'emacs-lisp-mode)
 
 (setq-default tab-width 2
               indent-tabs-mode nil)
@@ -169,6 +169,8 @@
 (show-paren-mode t)
 
 (global-linum-mode 1)
+(column-number-mode 1)
+
 (setq linum-delay t)
 (defadvice linum-schedule (around my-linum-schedule () activate)
   (run-with-idle-timer 0.2 nil #'linum-update-current))
@@ -290,6 +292,7 @@
 (mapc #'package-bundle
       '(esup noflet))
 
+(setq evil-want-abbrev-expand-on-insert-exit nil)
 (mapc #'require-or-install '(evil evil-surround evil-numbers))
 
 (require 'evil)
@@ -402,80 +405,79 @@
 ;; (load-file (let ((coding-system-for-read 'utf-8))
 ;;              (shell-command-to-string "agda-mode locate")))
 
+;; (when (mac-os-p)
+;;   (package-bundle 'clojure-mode)
+;;   (package-bundle 'cider)
+
+;;   (use-package clojure-mode
+;;     :defer t
+;;     :config
+;;     (add-hook 'clojure-mode #'yas-minor-mode)
+;;     (add-hook 'clojure-mode #'subword-mode)
+;;     (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode))
+
+;;   (use-package cider
+;;     :defer t
+;;     :config
+;;     (add-hook 'cider-mode-hook #'(lambda ()
+;;                                    (autocompletion-with 'company)
+;;                                    ))
+;;     (add-hook 'cider-mode-hook #'eldoc-mode)
+;;     (add-hook 'cider-repl-mode-hook #'(lambda ()
+;;                                         (autocompletion-with 'company)))
+;;     (add-hook 'cider-repl-mode-hook #'turn-on-smartparens-strict-mode)
+;;     (add-hook 'cider-repl-mode-hook #'eldoc-mode)
+;;     (add-hook 'cider-repl-mode-hook #'evil-insert-state)
+;;     (setq nrepl-log-messages nil
+;;           cider-repl-display-in-current-window nil
+;;           cider-repl-use-clojure-font-lock t
+;;           cider-save-file-on-load 'always-save
+;;           cider-font-lock-dynamically '(macro core function var)
+;;           cider-overlays-use-font-lock t
+;;           cider-repl-display-help-banner nil)))
+
+;; (load (expand-file-name "~/.roswell/helper.elc"))
+
+;; (when (eq *autocompletion-mode* 'auto-complete)
+;;   (require-or-install 'ac-slime)
+;;   (add-hook 'slime-mode-hook 'set-up-slime-ac)
+;;   (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
+;;   (eval-after-load "auto-complete"
+;;     '(add-to-list 'ac-modes 'slime-repl-mode)))
+
+;; (when (eq *autocompletion-mode* 'company)
+;;   (package-bundle 'slime-company)
+;;   (slime-setup '(slime-fancy slime-company)))
+
+;; (unless (or (eq *autocompletion-mode* 'auto-complete) (eq *autocompletion-mode* 'company))
+;;   (slime-setup '(slime-fancy)))
+
+;; ;; (setq inferior-lisp-program "ros -Q run")
+
+
+;; (add-hook 'lisp-mode-hook 'turn-on-smartparens-strict-mode)
+;; ;; cl21
+;; (add-hook 'slime-connected-hook
+;;           (lambda ()
+;;             (when (slime-eval `(cl:if (cl:find-package :cl21-user) t))
+;;               (slime-repl-set-package :cl21-user)
+;;               (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
+
 (when (mac-os-p)
-  (package-bundle 'clojure-mode)
-  (package-bundle 'cider)
-
-  (use-package clojure-mode
-    :defer t
-    :config
-    (add-hook 'clojure-mode #'yas-minor-mode)
-    (add-hook 'clojure-mode #'subword-mode)
-    (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode))
-
-  (use-package cider
-    :defer t
-    :config
-    (add-hook 'cider-mode-hook #'(lambda ()
-                                   (autocompletion-with 'company)
-                                   ))
-    (add-hook 'cider-mode-hook #'eldoc-mode)
-    (add-hook 'cider-repl-mode-hook #'(lambda ()
-                                        (autocompletion-with 'company)))
-    (add-hook 'cider-repl-mode-hook #'turn-on-smartparens-strict-mode)
-    (add-hook 'cider-repl-mode-hook #'eldoc-mode)
-    (add-hook 'cider-repl-mode-hook #'evil-insert-state)
-    (setq nrepl-log-messages nil
-          cider-repl-display-in-current-window nil
-          cider-repl-use-clojure-font-lock t
-          cider-save-file-on-load 'always-save
-          cider-font-lock-dynamically '(macro core function var)
-          cider-overlays-use-font-lock t
-          cider-repl-display-help-banner nil)))
-
-(load (expand-file-name "~/.roswell/helper.el"))
-
-(when (eq *autocompletion-mode* 'auto-complete)
-  (require-or-install 'ac-slime)
-  (add-hook 'slime-mode-hook 'set-up-slime-ac)
-  (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-  (eval-after-load "auto-complete"
-    '(add-to-list 'ac-modes 'slime-repl-mode)))
-
-(when (eq *autocompletion-mode* 'company)
-  (package-bundle 'slime-company)
-  (slime-setup '(slime-fancy slime-company)))
-
-(unless (or (eq *autocompletion-mode* 'auto-complete) (eq *autocompletion-mode* 'company))
-  (slime-setup '(slime-fancy)))
-
-;; (setq inferior-lisp-program "ros -Q run")
-
-
-(add-hook 'lisp-mode-hook 'turn-on-smartparens-strict-mode)
-;; cl21
-(add-hook 'slime-connected-hook
-          (lambda ()
-            (when (slime-eval `(cl:if (cl:find-package :cl21-user) t))
-              (slime-repl-set-package :cl21-user)
-              (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
-
-(when (mac-os-p)
-(load "~/.emacs.d/site-lisp/PG/generic/proof-site")
-(add-hook 'proof-mode-hook
-          '(lambda ()
-             (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
-(add-hook 'proof-mode-hook
-          '(lambda ()
-             (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
-(setf proof-splash-enable nil)
-(when (not window-system)
-  (setf proof-colour-locked t)
-  (setf overlay-arrow-string ""))
-(setf proof-follow-mode 'followdown)
-(setq coq-prog-name "coqtop")
-(setq proof-three-window-mode-policy 'hybrid)
-)
+  (load "~/.emacs.d/site-lisp/PG/generic/proof-site")
+  (add-hook 'proof-mode-hook
+            '(lambda ()
+               (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
+  (add-hook 'proof-mode-hook
+            '(lambda ()
+               (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
+  (setf proof-splash-enable t)
+  (when (not window-system)
+    (setf proof-colour-locked t)
+    (setf overlay-arrow-string ""))
+  (setf proof-follow-mode 'followdown)
+  (setq coq-prog-name "coqtop")
+  (setq proof-three-window-mode-policy 'hybrid))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -484,27 +486,27 @@
  '(proof-locked-face ((t (:background "gray20"))))
  '(proof-queue-face ((t (:background "brightred")))))
 
-(require-or-install 'elixir-mode)
-(require-or-install 'alchemist)
+;; (require-or-install 'elixir-mode)
+;; (require-or-install 'alchemist)
 ;;(require-or-install 'ac-alchemist)
 
-(sp-with-modes '(elixir-mode)
-  (sp-local-pair "fn" "end"
-                 :when '(("SPC" "RET"))
-                 :actions '(insert navigate))
-  (sp-local-pair "do" "end"
-                 :when '(("SPC" "RET"))
-                 :post-handlers '(sp-ruby-def-post-handler)
-                 :actions '(insert navigate)))
+;; (sp-with-modes '(elixir-mode)
+;;   (sp-local-pair "fn" "end"
+;;                  :when '(("SPC" "RET"))
+;;                  :actions '(insert navigate))
+;;   (sp-local-pair "do" "end"
+;;                  :when '(("SPC" "RET"))
+;;                  :post-handlers '(sp-ruby-def-post-handler)
+;;                  :actions '(insert navigate)))
 
-(add-hook 'elixir-mode-hook (lambda () (autocompletion-with 'company)))
-(add-hook 'alchemist-iex-mode-hook 'elixir-mode)
-(add-hook 'alchemist-mix-mode-hook 'evil-insert-state)
-(define-key alchemist-iex-mode-map (kbd "T") nil)
+;; (add-hook 'elixir-mode-hook (lambda () (autocompletion-with 'company)))
+;; (add-hook 'alchemist-iex-mode-hook 'elixir-mode)
+;; (add-hook 'alchemist-mix-mode-hook 'evil-insert-state)
+;; (define-key alchemist-iex-mode-map (kbd "T") nil)
 
-(package-bundle 'erlang)
-(require 'erlang-start)
-(setq erlang-electric-commands '())
+;; (package-bundle 'erlang)
+;; (require 'erlang-start)
+;; (setq erlang-electric-commands '())
 ;; (when (mac-os-p)
 ;;   (setq load-path (cons (expand-file-name "~/.kerl/19.3/lib/tools-2.9.1/emacs") load-path))
 ;;   (setq erlang-root (expand-file-name "~/.kerl/19.3/lib/erlang"))
@@ -521,19 +523,34 @@
 ;;   (require 'erlang-start)
 ;;   (setq erlang-electric-commands '())
 ;;   )
+
 (mapc #'require-or-install
       '(haskell-mode flycheck-haskell hindent ghc company-ghc))
 
+;; (mapc #'require-or-install
+;;       '(haskell-mode hindent))
+;; (mapc #'package-bundle
+;;       '(intero))
+;; (intero-global-mode 1)
+;; (add-hook 'haskell-mode 'hindent-mode)
+;; (custom-set-variables
+;;  '(haskell-stylish-on-save t))
+;; (eval-after-load 'flycheck
+;;   '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
+
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook '(lambda ()
-                                ;; (intero-mode)
                                 (autocompletion-with 'company)
                                 ))
+;; (add-hook 'haskell-mode-hook 'intero-mode)
+(add-hook 'haskell-mode-hook 'flycheck-mode)
 
 (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-;; (add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
-;; (add-hook 'haskell-mode-hook 'haskell-doc-mode)
-(add-to-list 'company-backends 'company-ghc)
+(add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
+(add-hook 'haskell-mode-hook 'haskell-doc-mode)
+
+(add-to-list 'company-backends '(company-ghc :with company-dabbrev-code))
+;; (add-to-list 'company-backends 'company-ghc)
 
 (add-hook 'haskell-mode-hook 'hindent-mode)
 
@@ -547,6 +564,7 @@
 
 (setq
   ;; company-ghc-show-info t
+  company-ghc-autoscan t
   ghc-display-error nil
   haskell-interactive-popup-errors nil
   haskell-interactive-mode-read-only nil
@@ -565,11 +583,25 @@
 
 (evil-set-initial-state 'haskell-interactive-mode 'insert)
 
+;; ;; this needs https://github.com/sergv/happy-mode
+;; (package-bundle 'mmm-mode)
+
+;; (require 'happy-mode-autoload)
+
+;; (add-to-list 'auto-mode-alist '("\\.happy\\'" . happy-mode))
+;; (mmm-add-mode-ext-class 'happy-mode "\\.happy\\'" 'haskell-blocks)
+;; (add-to-list 'auto-mode-alist '("\\.ly\\'" . happy-mode))
+;; (mmm-add-mode-ext-class 'happy-mode "\\.ly\\'" 'haskell-blocks)
+;; (add-to-list 'auto-mode-alist '("\\.y\\'" . happy-mode))
+;; (mmm-add-mode-ext-class 'happy-mode "\\.y\\'" 'haskell-blocks)
+
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 (package-bundle 'rust-mode)
 (require-or-install 'racer)
+(package-bundle 'flycheck-rust)
+
 ;;; racerやrustfmt、コンパイラにパスを通す
 (add-to-list 'exec-path (expand-file-name "~/.cargo/bin/"))
 ;;; rust-modeでrust-format-on-saveをtにすると自動でrustfmtが走る
@@ -578,6 +610,8 @@
           (setq company-tooltip-align-annotations t)))
 ;;; rustのファイルを編集するときにracerとflycheckを起動する
 (add-hook 'rust-mode-hook #'racer-mode)
+(add-hook 'rust-mode-hook #'flycheck-mode)
+(add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
 
 ;;; racerのeldocサポートを使う
 (add-hook 'racer-mode-hook #'eldoc-mode)
@@ -628,28 +662,28 @@
 (add-hook 'ocaml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
 
 
-(require-or-install 'd-mode)
-(require-or-install 'ac-dcd)
+;; (require-or-install 'd-mode)
+;; (require-or-install 'ac-dcd)
 
-(add-hook 'd-mode-hook
-          (lambda ()
-            (autocompletion-with 'auto-complete)
-            (when (featurep 'yasnippet) (yas-minor-mode-on))
-            (ac-dcd-maybe-start-server)
-            (ac-dcd-add-imports)
-            (add-to-list 'ac-sources 'ac-source-dcd)
-            (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
-            (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
-            (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
-            (define-key d-mode-map (kbd "C-c s") 'ac-dcd-search-symbol)
+;; (add-hook 'd-mode-hook
+;;           (lambda ()
+;;             (autocompletion-with 'auto-complete)
+;;             (when (featurep 'yasnippet) (yas-minor-mode-on))
+;;             (ac-dcd-maybe-start-server)
+;;             (ac-dcd-add-imports)
+;;             (add-to-list 'ac-sources 'ac-source-dcd)
+;;             (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
+;;             (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
+;;             (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
+;;             (define-key d-mode-map (kbd "C-c s") 'ac-dcd-search-symbol)
 
-            (when (featurep 'popwin)
-              (add-to-list 'popwin:special-display-config
-                           `(,ac-dcd-error-buffer-name :noselect t))
-              (add-to-list 'popwin:special-display-config
-                           `(,ac-dcd-document-buffer-name :position right :width 80))
-              (add-to-list 'popwin:special-display-config
-                           `(,ac-dcd-search-symbol-buffer-name :position bottom :width 5)))))
+;;             (when (featurep 'popwin)
+;;               (add-to-list 'popwin:special-display-config
+;;                            `(,ac-dcd-error-buffer-name :noselect t))
+;;               (add-to-list 'popwin:special-display-config
+;;                            `(,ac-dcd-document-buffer-name :position right :width 80))
+;;               (add-to-list 'popwin:special-display-config
+;;                            `(,ac-dcd-search-symbol-buffer-name :position bottom :width 5)))))
 
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
 (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
@@ -692,24 +726,24 @@
 (when (mac-os-p)
   (require 'carp-mode))
 
-(package-bundle 'idris-mode)
-(push 'idris-compiler-notes-mode
-      popwin:special-display-config)
-(push '(idris-repl-mode
-        :height 0.2
-        :noselect nil
-        :position bottom
-        :stick t)
-      popwin:special-display-config)
+;; (package-bundle 'idris-mode)
+;; (push 'idris-compiler-notes-mode
+;;       popwin:special-display-config)
+;; (push '(idris-repl-mode
+;;         :height 0.2
+;;         :noselect nil
+;;         :position bottom
+;;         :stick t)
+;;       popwin:special-display-config)
 
-(require-or-install 'nim-mode)
-(setq nim-nimsuggest-path "~/nim-0.17.0/bin/nimsuggest")
+;; (require-or-install 'nim-mode)
+;; (setq nim-nimsuggest-path "~/nim-0.17.0/bin/nimsuggest")
 
-(add-hook 'nim-mode-hook 'nimsuggest-mode)
+;; (add-hook 'nim-mode-hook 'nimsuggest-mode)
 
-(add-hook 'nim-mode-hook (lambda () (autocompletion-with 'company)))
+;; (add-hook 'nim-mode-hook (lambda () (autocompletion-with 'company)))
 
-(add-hook 'nimscript-mode-hook (lambda () (autocompletion-with 'company)))
+;; (add-hook 'nimscript-mode-hook (lambda () (autocompletion-with 'company)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -718,10 +752,10 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("3b0a350918ee819dca209cec62d867678d7dac74f6195f5e3799aa206358a983" "d3a7eea7ebc9a82b42c47e49517f7a1454116487f6907cf2f5c2df4b09b50fc1" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "6145e62774a589c074a31a05dfa5efdf8789cf869104e905956f0cbd7eda9d0e" "1263771faf6967879c3ab8b577c6c31020222ac6d3bac31f331a74275385a452" "eae831de756bb480240479794e85f1da0789c6f2f7746e5cc999370bbc8d9c8a" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+    ("ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "3b0a350918ee819dca209cec62d867678d7dac74f6195f5e3799aa206358a983" "d3a7eea7ebc9a82b42c47e49517f7a1454116487f6907cf2f5c2df4b09b50fc1" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "6145e62774a589c074a31a05dfa5efdf8789cf869104e905956f0cbd7eda9d0e" "1263771faf6967879c3ab8b577c6c31020222ac6d3bac31f331a74275385a452" "eae831de756bb480240479794e85f1da0789c6f2f7746e5cc999370bbc8d9c8a" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
+    (bison-mode crystal-mode cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
  '(safe-local-variable-values
    (quote
     ((coq-prog-args "-emacs" "-R" "/Users/yuya/Desktop/cpdt/src" "Cpdt")))))
@@ -730,4 +764,4 @@
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
 
-(add-to-list 'company-backends 'company-capf)
+;; (add-to-list 'company-backends 'company-capf)
