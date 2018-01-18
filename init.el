@@ -11,8 +11,7 @@
 (set-language-environment "Japanese")
 (setq eval-expression-print-level nil)
 (setq max-lisp-eval-depth 10000)
-;; (setq garbage-collection-messages t)
-(setq gc-cons-threshold (* 100 gc-cons-threshold))
+(setq gc-cons-threshold (* 10 gc-cons-threshold))
 (setq split-width-threshold 90)
 
 (display-time)
@@ -216,7 +215,7 @@
 ;; (setq-default save-place t)
 (save-place-mode 1)
 
-(package-bundle 'flycheck)
+(require-or-install 'flycheck)
 (package-bundle 'flycheck-popup-tip)
 ;; (add-hook 'after-init-hook #'global-flycheck-mode)
 
@@ -401,6 +400,14 @@
   (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
   (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
                                             ("* ||\n[i]" "RET"))))
+(require-or-install 'cc-mode)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (turn-on-smartparens-mode)
+            (electric-indent-mode 1)
+            (setq c-default-style "k&r")
+            (setq indent-tabs-mode nil)
+            (setq c-basic-offset 2)))
 
 ;; (load-file (let ((coding-system-for-read 'utf-8))
 ;;              (shell-command-to-string "agda-mode locate")))
@@ -465,13 +472,19 @@
 
 (when (mac-os-p)
   (load "~/.emacs.d/site-lisp/PG/generic/proof-site")
+  (package-bundle 'company-coq)
+  (add-hook 'coq-mode-hook
+            '(lambda ()
+               (autocompletion-with 'company)))
+  (add-hook 'coq-mode-hook
+            #'company-coq-mode)
   (add-hook 'proof-mode-hook
             '(lambda ()
                (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
   (add-hook 'proof-mode-hook
             '(lambda ()
                (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
-  (setf proof-splash-enable t)
+  (setf proof-splash-enable nil)
   (when (not window-system)
     (setf proof-colour-locked t)
     (setf overlay-arrow-string ""))
@@ -486,114 +499,64 @@
  '(proof-locked-face ((t (:background "gray20"))))
  '(proof-queue-face ((t (:background "brightred")))))
 
-;; (require-or-install 'elixir-mode)
-;; (require-or-install 'alchemist)
-;;(require-or-install 'ac-alchemist)
-
-;; (sp-with-modes '(elixir-mode)
-;;   (sp-local-pair "fn" "end"
-;;                  :when '(("SPC" "RET"))
-;;                  :actions '(insert navigate))
-;;   (sp-local-pair "do" "end"
-;;                  :when '(("SPC" "RET"))
-;;                  :post-handlers '(sp-ruby-def-post-handler)
-;;                  :actions '(insert navigate)))
-
-;; (add-hook 'elixir-mode-hook (lambda () (autocompletion-with 'company)))
-;; (add-hook 'alchemist-iex-mode-hook 'elixir-mode)
-;; (add-hook 'alchemist-mix-mode-hook 'evil-insert-state)
-;; (define-key alchemist-iex-mode-map (kbd "T") nil)
-
-;; (package-bundle 'erlang)
-;; (require 'erlang-start)
-;; (setq erlang-electric-commands '())
-;; (when (mac-os-p)
-;;   (setq load-path (cons (expand-file-name "~/.kerl/19.3/lib/tools-2.9.1/emacs") load-path))
-;;   (setq erlang-root (expand-file-name "~/.kerl/19.3/lib/erlang"))
-;;   (setq erlang-man-root-dir (expand-file-name "~/.kerl/19.3/lib/erlang/man"))
-;;   (setq exec-path (cons (expand-file-name "~/.kerl/19.3/bin") exec-path))
-;;   (require 'erlang-start)
-;;   (setq erlang-electric-commands '()))
-
-;; (when (linuxp)
-;;   (setq load-path (cons "/home/yuya/kerl/19.2/lib/tools-2.9/emacs" load-path))
-;;   (setq erlang-root "/home/yuya/kerl/19.2/lib/erlang")
-;;   (setq erlang-man-root-dir "/home/yuya/kerl/19.2/lib/erlang/man")
-;;   (setq exec-path (cons "/home/yuya/kerl/19.2/bin" exec-path))
-;;   (require 'erlang-start)
-;;   (setq erlang-electric-commands '())
-;;   )
 
 (mapc #'require-or-install
-      '(haskell-mode flycheck-haskell hindent ghc company-ghc))
+      '(haskell-mode flycheck-haskell ;; ghc company-ghc
+                     hindent
+                     intero))
 
-;; (mapc #'require-or-install
-;;       '(haskell-mode hindent))
-;; (mapc #'package-bundle
-;;       '(intero))
-;; (intero-global-mode 1)
-;; (add-hook 'haskell-mode 'hindent-mode)
-;; (custom-set-variables
-;;  '(haskell-stylish-on-save t))
+(add-hook 'haskell-mode-hook 'intero-mode)
+(add-hook 'haskell-mode-hook #'(lambda () (auto-complete-mode -1)))
+(add-hook 'haskell-mode-hook 'hindent-mode)
+(flycheck-add-next-checker 'intero 'haskell-stack-ghc 'haskell-hlint)
+(setq haskell-stylish-on-save t)
+
+(defadvice eldoc-intero-maybe-print (around eldoc-intero-maybe-print-around activate)
+  "https://github.com/commercialhaskell/intero/issues/277"
+  (unless (string-match
+           "^ <no location info>: \\(error: \\)?not an expression: \\(\u2018\u2019\\|\xE2\x80\x98\xE2\x80\x99\\|\x91\x92\\)$"
+           (ad-get-arg 0))
+    ad-do-it))
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;; (add-hook 'haskell-mode-hook '(lambda ()
+;;                                 (autocompletion-with 'company)
+;;                                 ))
+;; (add-hook 'haskell-mode-hook 'flycheck-mode)
+
+;; (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+;; (add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
+;; (add-hook 'haskell-mode-hook 'haskell-doc-mode)
+
+;; (add-to-list 'company-backends '(company-ghc :with company-dabbrev-code))
+
+;; (add-hook 'haskell-mode-hook 'hindent-mode)
+;; (add-hook 'haskell-mode-hook 'flycheck-mode)
 ;; (eval-after-load 'flycheck
 ;;   '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
 
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-(add-hook 'haskell-mode-hook '(lambda ()
-                                (autocompletion-with 'company)
-                                ))
-;; (add-hook 'haskell-mode-hook 'intero-mode)
-(add-hook 'haskell-mode-hook 'flycheck-mode)
+;; (setq haskell-process-type 'stack-ghci)
+;; (setq haskell-process-path-ghci "stack")
+;; (setq haskell-process-args-ghci "ghci")
 
-(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-(add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
-(add-hook 'haskell-mode-hook 'haskell-doc-mode)
+;; (setq
+;;   company-ghc-autoscan t
+;;   ghc-display-error nil
+;;   haskell-interactive-popup-errors nil
+;;   haskell-interactive-mode-read-only nil
+;;   haskell-interactive-prompt-read-only nil
+;;   haskell-process-auto-import-loaded-modules t
+;;   haskell-process-log t
+;;   haskell-process-suggest-remove-import-lines t
+;;   haskell-process-type (quote stack-ghci)
+;;  haskell-stylish-on-save t
+;; )
 
-(add-to-list 'company-backends '(company-ghc :with company-dabbrev-code))
-;; (add-to-list 'company-backends 'company-ghc)
+;; (autoload 'ghc-init "ghc" nil t)
+;; (autoload 'ghc-debug "ghc" nil t)
+;; ;; (add-hook 'haskell-mode-hook '(lambda () (ghc-comp-init)))
 
-(add-hook 'haskell-mode-hook 'hindent-mode)
+;; (evil-set-initial-state 'haskell-interactive-mode 'insert)
 
-(add-hook 'haskell-mode-hook 'flycheck-mode)
-(eval-after-load 'flycheck
-  '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
-
-(setq haskell-process-type 'stack-ghci)
-(setq haskell-process-path-ghci "stack")
-(setq haskell-process-args-ghci "ghci")
-
-(setq
-  ;; company-ghc-show-info t
-  company-ghc-autoscan t
-  ghc-display-error nil
-  haskell-interactive-popup-errors nil
-  haskell-interactive-mode-read-only nil
-  haskell-interactive-prompt-read-only nil
-  haskell-process-auto-import-loaded-modules t
-  haskell-process-log t
-  haskell-process-suggest-remove-import-lines t
-  haskell-process-type (quote stack-ghci)
-  haskell-stylish-on-save t
- )
-
-(autoload 'ghc-init "ghc" nil t)
-(autoload 'ghc-debug "ghc" nil t)
-;; (add-hook 'haskell-mode-hook '(lambda () (ghc-init)))
-(add-hook 'haskell-mode-hook '(lambda () (ghc-comp-init)))
-
-(evil-set-initial-state 'haskell-interactive-mode 'insert)
-
-;; ;; this needs https://github.com/sergv/happy-mode
-;; (package-bundle 'mmm-mode)
-
-;; (require 'happy-mode-autoload)
-
-;; (add-to-list 'auto-mode-alist '("\\.happy\\'" . happy-mode))
-;; (mmm-add-mode-ext-class 'happy-mode "\\.happy\\'" 'haskell-blocks)
-;; (add-to-list 'auto-mode-alist '("\\.ly\\'" . happy-mode))
-;; (mmm-add-mode-ext-class 'happy-mode "\\.ly\\'" 'haskell-blocks)
-;; (add-to-list 'auto-mode-alist '("\\.y\\'" . happy-mode))
-;; (mmm-add-mode-ext-class 'happy-mode "\\.y\\'" 'haskell-blocks)
 
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
@@ -619,12 +582,7 @@
 ;; (package-bundle 'ac-racer)
 
 ;; ;;; racerの補完サポートを使う
-;; (add-hook 'racer-mode-hook (lambda ()
-;;                              (autocompletion-with 'auto-complete)
-;;                              (ac-racer-setup)))
 (add-hook 'racer-mode-hook #'(lambda () (autocompletion-with 'company)))
-;; ;; (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
-;; (setq company-tooltip-align-annotations t)
 
 (package-bundle 'scala-mode)
 
@@ -654,36 +612,8 @@
   (add-hook 'go-mode-hook '(lambda () (autocompletion-with 'autocomplete)))
   (add-hook 'go-mode-hook 'go-eldoc-setup)
   (add-hook 'before-save-hook 'gofmt-before-save))
-
-;; (with-eval-after-load 'company
-;;   (add-to-list 'company-backends 'merlin-company-backend))
-
-;; (add-to-list 'auto-mode-alist '("\\.ml\\'" . caml-mode))
 (add-hook 'ocaml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
 
-
-;; (require-or-install 'd-mode)
-;; (require-or-install 'ac-dcd)
-
-;; (add-hook 'd-mode-hook
-;;           (lambda ()
-;;             (autocompletion-with 'auto-complete)
-;;             (when (featurep 'yasnippet) (yas-minor-mode-on))
-;;             (ac-dcd-maybe-start-server)
-;;             (ac-dcd-add-imports)
-;;             (add-to-list 'ac-sources 'ac-source-dcd)
-;;             (define-key d-mode-map (kbd "C-c ?") 'ac-dcd-show-ddoc-with-buffer)
-;;             (define-key d-mode-map (kbd "C-c .") 'ac-dcd-goto-definition)
-;;             (define-key d-mode-map (kbd "C-c ,") 'ac-dcd-goto-def-pop-marker)
-;;             (define-key d-mode-map (kbd "C-c s") 'ac-dcd-search-symbol)
-
-;;             (when (featurep 'popwin)
-;;               (add-to-list 'popwin:special-display-config
-;;                            `(,ac-dcd-error-buffer-name :noselect t))
-;;               (add-to-list 'popwin:special-display-config
-;;                            `(,ac-dcd-document-buffer-name :position right :width 80))
-;;               (add-to-list 'popwin:special-display-config
-;;                            `(,ac-dcd-search-symbol-buffer-name :position bottom :width 5)))))
 
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
 (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
@@ -691,21 +621,6 @@
 
 (add-hook 'prolog-mode-hook (lambda () (autocompletion-with 'auto-complete)))
 
-;; (package-bundle 'ess)
-;; (require 'ess-site)
-;; (setq ess-use-auto-complete t)
-;; (add-hook 'julia-mode-hook #'(lambda () (autocompletion-with 'autocomplete)))
-;; (add-hook 'inferior-ess-mode-hook 'evil-insert-state)
-
-(require-or-install 'cc-mode)
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (turn-on-smartparens-mode)
-            (electric-indent-mode 1)
-            (setq c-default-style "k&r")
-            (setq indent-tabs-mode nil)
-            ;; (c-toggle-auto-newline 1)
-            (setq c-basic-offset 2)))
 
 (require-or-install 'llvm-mode)
 
@@ -725,25 +640,6 @@
 
 (when (mac-os-p)
   (require 'carp-mode))
-
-;; (package-bundle 'idris-mode)
-;; (push 'idris-compiler-notes-mode
-;;       popwin:special-display-config)
-;; (push '(idris-repl-mode
-;;         :height 0.2
-;;         :noselect nil
-;;         :position bottom
-;;         :stick t)
-;;       popwin:special-display-config)
-
-;; (require-or-install 'nim-mode)
-;; (setq nim-nimsuggest-path "~/nim-0.17.0/bin/nimsuggest")
-
-;; (add-hook 'nim-mode-hook 'nimsuggest-mode)
-
-;; (add-hook 'nim-mode-hook (lambda () (autocompletion-with 'company)))
-
-;; (add-hook 'nimscript-mode-hook (lambda () (autocompletion-with 'company)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
