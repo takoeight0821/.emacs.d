@@ -396,6 +396,8 @@
 (smartparens-global-mode t)
 
 ;;; C/C++
+(mapc #'package-bundle '(irony flycheck-irony company-irony irony-eldoc))
+
 (sp-with-modes '(c-mode malabar-mode c++-mode)
   (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
   (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
@@ -405,9 +407,27 @@
           (lambda ()
             (turn-on-smartparens-mode)
             (electric-indent-mode 1)
+            (autocompletion-with 'company)
             (setq c-default-style "k&r")
             (setq indent-tabs-mode nil)
             (setq c-basic-offset 2)))
+
+(add-hook 'c-mode-hook 'flycheck-mode)
+(add-hook 'c++-mode-hook 'flycheck-mode)
+
+(with-eval-after-load "irony"
+  (custom-set-variables '(irony-additional-clang-options '("-std=c++14")))
+  (add-to-list 'company-backends 'company-irony)
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+  (add-hook 'c++-mode-hook 'irony-mode)
+  (add-hook 'c-mode-hook 'irony-mode)
+  (add-hook 'objc-mode-hook 'irony-mode)
+  (add-hook 'irony-mode-hook #'irony-eldoc)
+  )
+
+(with-eval-after-load "flycheck"
+  (when (locate-library "flycheck-irony")
+    (flycheck-irony-setup)))
 
 ;; (load-file (let ((coding-system-for-read 'utf-8))
 ;;              (shell-command-to-string "agda-mode locate")))
@@ -509,7 +529,7 @@
 (add-hook 'haskell-mode-hook #'(lambda () (auto-complete-mode -1)))
 (add-hook 'haskell-mode-hook 'hindent-mode)
 (flycheck-add-next-checker 'intero 'haskell-stack-ghc 'haskell-hlint)
-(setq haskell-stylish-on-save t)
+(setq haskell-stylish-on-save nil)
 
 (defadvice eldoc-intero-maybe-print (around eldoc-intero-maybe-print-around activate)
   "https://github.com/commercialhaskell/intero/issues/277"
@@ -560,6 +580,8 @@
 
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+(require-or-install 'toml-mode)
 
 (package-bundle 'rust-mode)
 (require-or-install 'racer)
@@ -622,7 +644,25 @@
 (add-hook 'prolog-mode-hook (lambda () (autocompletion-with 'auto-complete)))
 
 
-(require-or-install 'llvm-mode)
+(require 'llvm-mode)
+(c-add-style "llvm.org"
+             '("gnu"
+	       (fill-column . 80)
+	       (c++-indent-level . 2)
+	       (c-basic-offset . 2)
+	       (indent-tabs-mode . nil)
+	       (c-offsets-alist . ((arglist-intro . ++)
+				   (innamespace . 0)
+				   (member-init-intro . ++)))))
+
+;; Files with "llvm" in their names will automatically be set to the
+;; llvm.org coding style.
+(add-hook 'c-mode-common-hook
+	  (function
+	   (lambda nil
+	     (if (string-match "llvm" buffer-file-name)
+		 (progn
+		   (c-set-style "llvm.org"))))))
 
 (require-or-install 'racket-mode)
 
@@ -646,12 +686,15 @@
  '(custom-safe-themes
    (quote
     ("ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "3b0a350918ee819dca209cec62d867678d7dac74f6195f5e3799aa206358a983" "d3a7eea7ebc9a82b42c47e49517f7a1454116487f6907cf2f5c2df4b09b50fc1" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "6145e62774a589c074a31a05dfa5efdf8789cf869104e905956f0cbd7eda9d0e" "1263771faf6967879c3ab8b577c6c31020222ac6d3bac31f331a74275385a452" "eae831de756bb480240479794e85f1da0789c6f2f7746e5cc999370bbc8d9c8a" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+ '(irony-additional-clang-options (quote ("-std=c++14")))
  '(package-selected-packages
    (quote
     (bison-mode crystal-mode cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
  '(safe-local-variable-values
    (quote
-    ((coq-prog-args "-emacs" "-R" "/Users/yuya/Desktop/cpdt/src" "Cpdt")))))
+    ((intero-targets "malgo:lib" "malgo:test:spec")
+     (intero-targets "malgo:lib" "malgo:exe:malgo" "malgo:test:spec")
+     (coq-prog-args "-emacs" "-R" "/Users/yuya/Desktop/cpdt/src" "Cpdt")))))
 
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
