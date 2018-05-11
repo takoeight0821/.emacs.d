@@ -180,7 +180,7 @@
       eol-mnemonic-unix "(LF)")
 
 (if (mac-os-p)
-    (set-face-attribute 'default nil :family "Source Han Code JP L" :height 140 :weight 'light)
+    (set-face-attribute 'default nil :family "Source Han Code JP L" :height 160 :weight 'light)
   (set-face-attribute 'default nil :family "Inconsolata" :height 140))
 
 (package-bundle 'base16-theme)
@@ -188,36 +188,19 @@
 (package-bundle 'spacemacs-theme)
 (package-bundle 'zenburn-theme)
 (package-bundle 'jazz-theme)
-;; (load-theme 'spacemacs-dark t nil)
 
 (load-theme 'railscasts t nil)
-;; (load-theme 'base16-railscasts t nil)
-;; (with-eval-after-load 'evil
-;;   ;; Set the cursor color based on the evil state
-;;   (defvar my/base16-colors base16-railscasts-colors)
-;;   (setq evil-emacs-state-cursor   `(,(plist-get my/base16-colors :base0D) box)
-;;         evil-insert-state-cursor  `(,(plist-get my/base16-colors :base0D) bar)
-;;         evil-motion-state-cursor  `(,(plist-get my/base16-colors :base0E) box)
-;;         evil-normal-state-cursor  `(,(plist-get my/base16-colors :base0B) box)
-;;         evil-replace-state-cursor `(,(plist-get my/base16-colors :base08) bar)
-;;         evil-visual-state-cursor  `(,(plist-get my/base16-colors :base09) box)))
 (setq frame-background-mode 'dark)
-
-;; (require-or-install 'rainbow-delimiters)
-;; (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 (require-or-install 'paren-face)
 (global-paren-face-mode t)
 
-;; (require 'saveplace)
-;; (setq-default save-place t)
 (save-place-mode 1)
 
 (require-or-install 'flycheck)
 (package-bundle 'flycheck-popup-tip)
-;; (add-hook 'after-init-hook #'global-flycheck-mode)
 
 (with-eval-after-load 'flycheck
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
@@ -233,9 +216,7 @@
 
 (add-to-list 'company-backends '(company-yasnippet company-capf company-dabbrev))
 
-;; (global-set-key (kbd "C-M-i") 'company-complete)
-
-;; c-n, C-pで補完候補を次/前の候補を選択
+;; C-n, C-pで補完候補を次/前の候補を選択
 (define-key company-active-map (kbd "C-n") 'company-select-next)
 (define-key company-active-map (kbd "C-p") 'company-select-previous)
 (define-key company-search-map (kbd "C-n") 'company-select-next)
@@ -264,7 +245,6 @@
                     :background "orange")
 (set-face-attribute 'company-scrollbar-bg nil
                     :background "gray40")
-;; (global-set-key "\t" 'company-indent-or-complete-common)
 
 (require-or-install 'auto-complete)
 (ac-config-default)
@@ -286,7 +266,6 @@
            (auto-complete-mode 1)
            (setq *autocompletion-mode* 'auto-complete))))
 
-;; (add-hook 'after-init-hook  '(lambda () (autocompletion-with *autocompletion-mode*)))
 
 (mapc #'package-bundle
       '(esup noflet))
@@ -416,7 +395,7 @@
 (add-hook 'c++-mode-hook 'flycheck-mode)
 
 (with-eval-after-load "irony"
-  (custom-set-variables '(irony-additional-clang-options '("-std=c++14")))
+  ;; (custom-set-variables '(irony-additional-clang-options '("-std=c++14")))
   (add-to-list 'company-backends 'company-irony)
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
   (add-hook 'c++-mode-hook 'irony-mode)
@@ -428,67 +407,6 @@
 (with-eval-after-load "flycheck"
   (when (locate-library "flycheck-irony")
     (flycheck-irony-setup)))
-
-;; (load-file (let ((coding-system-for-read 'utf-8))
-;;              (shell-command-to-string "agda-mode locate")))
-
-;; (when (mac-os-p)
-;;   (package-bundle 'clojure-mode)
-;;   (package-bundle 'cider)
-
-;;   (use-package clojure-mode
-;;     :defer t
-;;     :config
-;;     (add-hook 'clojure-mode #'yas-minor-mode)
-;;     (add-hook 'clojure-mode #'subword-mode)
-;;     (add-hook 'clojure-mode #'turn-on-smartparens-strict-mode))
-
-;;   (use-package cider
-;;     :defer t
-;;     :config
-;;     (add-hook 'cider-mode-hook #'(lambda ()
-;;                                    (autocompletion-with 'company)
-;;                                    ))
-;;     (add-hook 'cider-mode-hook #'eldoc-mode)
-;;     (add-hook 'cider-repl-mode-hook #'(lambda ()
-;;                                         (autocompletion-with 'company)))
-;;     (add-hook 'cider-repl-mode-hook #'turn-on-smartparens-strict-mode)
-;;     (add-hook 'cider-repl-mode-hook #'eldoc-mode)
-;;     (add-hook 'cider-repl-mode-hook #'evil-insert-state)
-;;     (setq nrepl-log-messages nil
-;;           cider-repl-display-in-current-window nil
-;;           cider-repl-use-clojure-font-lock t
-;;           cider-save-file-on-load 'always-save
-;;           cider-font-lock-dynamically '(macro core function var)
-;;           cider-overlays-use-font-lock t
-;;           cider-repl-display-help-banner nil)))
-
-;; (load (expand-file-name "~/.roswell/helper.elc"))
-
-;; (when (eq *autocompletion-mode* 'auto-complete)
-;;   (require-or-install 'ac-slime)
-;;   (add-hook 'slime-mode-hook 'set-up-slime-ac)
-;;   (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-;;   (eval-after-load "auto-complete"
-;;     '(add-to-list 'ac-modes 'slime-repl-mode)))
-
-;; (when (eq *autocompletion-mode* 'company)
-;;   (package-bundle 'slime-company)
-;;   (slime-setup '(slime-fancy slime-company)))
-
-;; (unless (or (eq *autocompletion-mode* 'auto-complete) (eq *autocompletion-mode* 'company))
-;;   (slime-setup '(slime-fancy)))
-
-;; ;; (setq inferior-lisp-program "ros -Q run")
-
-
-;; (add-hook 'lisp-mode-hook 'turn-on-smartparens-strict-mode)
-;; ;; cl21
-;; (add-hook 'slime-connected-hook
-;;           (lambda ()
-;;             (when (slime-eval `(cl:if (cl:find-package :cl21-user) t))
-;;               (slime-repl-set-package :cl21-user)
-;;               (slime-repl-eval-string "(cl21:enable-cl21-syntax)"))) t)
 
 (when (mac-os-p)
   (load "~/.emacs.d/site-lisp/PG/generic/proof-site")
@@ -510,7 +428,9 @@
     (setf overlay-arrow-string ""))
   (setf proof-follow-mode 'followdown)
   (setq coq-prog-name "coqtop")
+  (setq coq-compile-before-require t)
   (setq proof-three-window-mode-policy 'hybrid))
+(setq proof-tree-program "traf")
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -528,7 +448,8 @@
 (add-hook 'haskell-mode-hook 'intero-mode)
 (add-hook 'haskell-mode-hook #'(lambda () (auto-complete-mode -1)))
 (add-hook 'haskell-mode-hook 'hindent-mode)
-(flycheck-add-next-checker 'intero 'haskell-stack-ghc 'haskell-hlint)
+(flycheck-add-next-checker 'intero
+                           'haskell-hlint)
 (setq haskell-stylish-on-save nil)
 
 (defadvice eldoc-intero-maybe-print (around eldoc-intero-maybe-print-around activate)
@@ -686,18 +607,15 @@
  '(custom-safe-themes
    (quote
     ("ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "3b0a350918ee819dca209cec62d867678d7dac74f6195f5e3799aa206358a983" "d3a7eea7ebc9a82b42c47e49517f7a1454116487f6907cf2f5c2df4b09b50fc1" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "6145e62774a589c074a31a05dfa5efdf8789cf869104e905956f0cbd7eda9d0e" "1263771faf6967879c3ab8b577c6c31020222ac6d3bac31f331a74275385a452" "eae831de756bb480240479794e85f1da0789c6f2f7746e5cc999370bbc8d9c8a" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
- '(irony-additional-clang-options (quote ("-std=c++14")))
+ ;; '(irony-additional-clang-options (quote ("-std=c++14")))
  '(package-selected-packages
    (quote
-    (bison-mode crystal-mode cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
+    (yasnippet-snippets bison-mode crystal-mode cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
  '(safe-local-variable-values
    (quote
     ((intero-targets "malgo:lib" "malgo:test:spec")
-     (intero-targets "malgo:lib" "malgo:exe:malgo" "malgo:test:spec")
-     (coq-prog-args "-emacs" "-R" "/Users/yuya/Desktop/cpdt/src" "Cpdt")))))
+     (intero-targets "malgo:lib" "malgo:exe:malgo" "malgo:test:spec")))))
 
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
-
-;; (add-to-list 'company-backends 'company-capf)
