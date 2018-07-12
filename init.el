@@ -13,6 +13,7 @@
 (setq max-lisp-eval-depth 10000)
 (setq gc-cons-threshold (* 10 gc-cons-threshold))
 (setq split-width-threshold 90)
+(setq create-lockfiles nil)
 
 (display-time)
 
@@ -374,6 +375,10 @@
 
 (smartparens-global-mode t)
 
+(require-or-install 'lsp-mode)
+(require-or-install 'lsp-ui)
+(add-hook 'lsp-mode-hook 'lsp-ui-mode)
+
 ;;; C/C++
 (mapc #'package-bundle '(irony flycheck-irony company-irony irony-eldoc))
 
@@ -439,7 +444,10 @@
  '(proof-locked-face ((t (:background "gray20"))))
  '(proof-queue-face ((t (:background "brightred")))))
 
-
+;; (require-or-install 'lsp-haskell)
+;; (require-or-install 'haskell-mode)
+;; (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
+;; (add-hook 'haskell-mode-hook 'flycheck-mode)
 (mapc #'require-or-install
       '(haskell-mode flycheck-haskell ;; ghc company-ghc
                      hindent
@@ -458,46 +466,6 @@
            "^ <no location info>: \\(error: \\)?not an expression: \\(\u2018\u2019\\|\xE2\x80\x98\xE2\x80\x99\\|\x91\x92\\)$"
            (ad-get-arg 0))
     ad-do-it))
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;; (add-hook 'haskell-mode-hook '(lambda ()
-;;                                 (autocompletion-with 'company)
-;;                                 ))
-;; (add-hook 'haskell-mode-hook 'flycheck-mode)
-
-;; (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-;; (add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
-;; (add-hook 'haskell-mode-hook 'haskell-doc-mode)
-
-;; (add-to-list 'company-backends '(company-ghc :with company-dabbrev-code))
-
-;; (add-hook 'haskell-mode-hook 'hindent-mode)
-;; (add-hook 'haskell-mode-hook 'flycheck-mode)
-;; (eval-after-load 'flycheck
-;;   '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
-
-;; (setq haskell-process-type 'stack-ghci)
-;; (setq haskell-process-path-ghci "stack")
-;; (setq haskell-process-args-ghci "ghci")
-
-;; (setq
-;;   company-ghc-autoscan t
-;;   ghc-display-error nil
-;;   haskell-interactive-popup-errors nil
-;;   haskell-interactive-mode-read-only nil
-;;   haskell-interactive-prompt-read-only nil
-;;   haskell-process-auto-import-loaded-modules t
-;;   haskell-process-log t
-;;   haskell-process-suggest-remove-import-lines t
-;;   haskell-process-type (quote stack-ghci)
-;;  haskell-stylish-on-save t
-;; )
-
-;; (autoload 'ghc-init "ghc" nil t)
-;; (autoload 'ghc-debug "ghc" nil t)
-;; ;; (add-hook 'haskell-mode-hook '(lambda () (ghc-comp-init)))
-
-;; (evil-set-initial-state 'haskell-interactive-mode 'insert)
-
 
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
@@ -607,7 +575,6 @@
  '(custom-safe-themes
    (quote
     ("ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "3b0a350918ee819dca209cec62d867678d7dac74f6195f5e3799aa206358a983" "d3a7eea7ebc9a82b42c47e49517f7a1454116487f6907cf2f5c2df4b09b50fc1" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "6145e62774a589c074a31a05dfa5efdf8789cf869104e905956f0cbd7eda9d0e" "1263771faf6967879c3ab8b577c6c31020222ac6d3bac31f331a74275385a452" "eae831de756bb480240479794e85f1da0789c6f2f7746e5cc999370bbc8d9c8a" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
- ;; '(irony-additional-clang-options (quote ("-std=c++14")))
  '(package-selected-packages
    (quote
     (yasnippet-snippets bison-mode crystal-mode cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
