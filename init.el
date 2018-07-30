@@ -33,6 +33,8 @@
   (or (package-installed-p package)
       (package-install-with-refresh package)))
 
+(require-or-install 'use-package)
+
 ;;; general settings
 (set-language-environment "Japanese")
 (setq eval-expression-print-level nil)
@@ -535,3 +537,17 @@
 (add-hook 'scheme-mode-hook (lambda () (autocompletion-with 'company)))
 
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el" :noerror)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (geiser racket-mode go-autocomplete go-eldoc go-mode yaml-mode sml-mode use-package yasnippet toml-mode smex smartparens scala-mode railscasts-theme racer popwin paren-face markdown-mode irony-eldoc intero ido-vertical-mode hindent flycheck-rust flycheck-popup-tip flycheck-irony flycheck-haskell evil-surround evil-numbers company-irony auto-complete))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
