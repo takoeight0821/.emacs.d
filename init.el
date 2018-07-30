@@ -1,6 +1,14 @@
-(eval-when-compile
-  (require 'cl))
+;; require packages
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives  '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(package-initialize)
 
+;; utilities
+
+;;; detect OS
 (defun windowsp ()
   (eq system-type 'windows-nt))
 (defun mac-os-p ()
@@ -8,39 +16,7 @@
 (defun linuxp ()
   (eq system-type 'gnu/linux))
 
-(set-language-environment "Japanese")
-(setq eval-expression-print-level nil)
-(setq max-lisp-eval-depth 10000)
-(setq gc-cons-threshold (* 10 gc-cons-threshold))
-(setq split-width-threshold 90)
-(setq create-lockfiles nil)
-
-(display-time)
-
-;; load environment value
-(load-file (expand-file-name "~/.emacs.d/shellenv.el"))
-(dolist (path (reverse (split-string (getenv "PATH") ":")))
-  (add-to-list 'exec-path path))
-
-(let ((default-directory (expand-file-name "~/.emacs.d/site-lisp")))
-  (add-to-list 'load-path default-directory)
-  (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
-      (normal-top-level-add-subdirs-to-load-path)))
-
-(require 'package)
-;; MELPAを追加
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-
-;; MELPA-stableを追加
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-
-;; Marmaladeを追加
-(add-to-list 'package-archives  '("marmalade" . "http://marmalade-repo.org/packages/") t)
-
-;; Orgを追加
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-(package-initialize)
-
+;;; package management
 (defun package-install-with-refresh (package)
   (unless (assq package package-alist)
     (package-refresh-contents))
@@ -57,16 +33,18 @@
   (or (package-installed-p package)
       (package-install-with-refresh package)))
 
-(require-or-install 'use-package)
-
-(setq-default use-package-always-ensure t)
-(setq-default use-package-verbose t)
+;;; general settings
+(set-language-environment "Japanese")
+(setq eval-expression-print-level nil)
+(setq max-lisp-eval-depth 10000)
+(setq gc-cons-threshold (* 10 gc-cons-threshold))
+(setq split-width-threshold 90)
+(setq create-lockfiles nil)
 
 (prefer-coding-system 'utf-8)
 (setq inhibit-startup-message t)
 (setq initial-scratch-message "")
 (setq initial-major-mode 'emacs-lisp-mode)
-
 (setq-default tab-width 2
               indent-tabs-mode nil)
 
@@ -130,8 +108,18 @@
 
 (setq vc-follow-symlinks nil)
 
-(package-bundle 'package-utils)
+(display-time)
 
+(when (file-exists-p (expand-file-name "~/.emacs.d/shellenv.el"))
+  (load-file (expand-file-name "~/.emacs.d/shellenv.el"))
+  (dolist (path (reverse (split-string (getenv "PATH") ":")))
+    (add-to-list 'exec-path path)))
+
+(when (file-directory-p (expand-file-name "~/.emacs.d/site-lisp"))
+ (let ((default-directory (expand-file-name "~/.emacs.d/site-lisp")))
+  (add-to-list 'load-path default-directory)
+  (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
+      (normal-top-level-add-subdirs-to-load-path))))
 (defun font-big ()
   (interactive)
   (set-face-attribute 'default nil :height
@@ -184,18 +172,14 @@
     (set-face-attribute 'default nil :family "Source Han Code JP L" :height 160 :weight 'light)
   (set-face-attribute 'default nil :family "Inconsolata" :height 140))
 
-(package-bundle 'base16-theme)
 (package-bundle 'railscasts-theme)
-(package-bundle 'spacemacs-theme)
-(package-bundle 'zenburn-theme)
-(package-bundle 'jazz-theme)
-
 (load-theme 'railscasts t nil)
 (setq frame-background-mode 'dark)
 
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 (require-or-install 'paren-face)
+
 (global-paren-face-mode t)
 
 (save-place-mode 1)
@@ -267,10 +251,6 @@
            (auto-complete-mode 1)
            (setq *autocompletion-mode* 'auto-complete))))
 
-
-(mapc #'package-bundle
-      '(esup noflet))
-
 (setq evil-want-abbrev-expand-on-insert-exit nil)
 (mapc #'require-or-install '(evil evil-surround evil-numbers))
 
@@ -293,11 +273,6 @@
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 (setq evil-esc-delay 0)
-
-(eval-after-load "slime"
-  '(progn
-     (define-key evil-normal-state-map (kbd "M-.") 'slime-edit-definition)
-     (define-key evil-normal-state-map (kbd "M-,") 'slime-pop-find-definition-stack)))
 
 (ido-mode 1)
 (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
@@ -375,11 +350,7 @@
 
 (smartparens-global-mode t)
 
-(require-or-install 'lsp-mode)
-(require-or-install 'lsp-ui)
-(add-hook 'lsp-mode-hook 'lsp-ui-mode)
-
-;;; C/C++
+;; C/C++
 (mapc #'package-bundle '(irony flycheck-irony company-irony irony-eldoc))
 
 (sp-with-modes '(c-mode malabar-mode c++-mode)
@@ -413,7 +384,8 @@
   (when (locate-library "flycheck-irony")
     (flycheck-irony-setup)))
 
-(when (mac-os-p)
+;; ProofGeneral, Coq
+(when (file-directory-p (expand-file-name "~/.emacs.d/site-lisp/PG"))
   (load "~/.emacs.d/site-lisp/PG/generic/proof-site")
   (package-bundle 'company-coq)
   (add-hook 'coq-mode-hook
@@ -434,25 +406,14 @@
   (setf proof-follow-mode 'followdown)
   (setq coq-prog-name "coqtop")
   (setq coq-compile-before-require t)
-  (setq proof-three-window-mode-policy 'hybrid))
-(setq proof-tree-program "traf")
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(proof-locked-face ((t (:background "gray20"))))
- '(proof-queue-face ((t (:background "brightred")))))
+  (setq proof-three-window-mode-policy 'hybrid)
+  (custom-set-faces
+   '(proof-locked-face ((t (:background "gray20"))))
+   '(proof-queue-face ((t (:background "brightred"))))))
 
-;; (require-or-install 'lsp-haskell)
-;; (require-or-install 'haskell-mode)
-;; (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
-;; (add-hook 'haskell-mode-hook 'flycheck-mode)
+;; Haskell
 (mapc #'require-or-install
-      '(haskell-mode flycheck-haskell ;; ghc company-ghc
-                     hindent
-                     intero))
-
+      '(haskell-mode flycheck-haskell hindent intero))
 (add-hook 'haskell-mode-hook 'intero-mode)
 (add-hook 'haskell-mode-hook #'(lambda () (auto-complete-mode -1)))
 (add-hook 'haskell-mode-hook 'hindent-mode)
@@ -467,10 +428,14 @@
            (ad-get-arg 0))
     ad-do-it))
 
+;; Markdown
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
+;; TOML
 (require-or-install 'toml-mode)
+
+;; Rust
 
 (package-bundle 'rust-mode)
 (require-or-install 'racer)
@@ -495,12 +460,14 @@
 ;; ;;; racerの補完サポートを使う
 (add-hook 'racer-mode-hook #'(lambda () (autocompletion-with 'company)))
 
+;; Scala
 (package-bundle 'scala-mode)
 
 (use-package scala-mode
   :interpreter
   ("scala" . scala-mode))
 
+;; SML
 (package-bundle 'sml-mode)
 (autoload 'sml-mode "sml-mode" "Major mode for editing SML." t)
 
@@ -510,11 +477,13 @@
 (add-hook 'sml-mode-hook 'electric-indent-mode)
 (add-hook 'sml-mode-hook '(lambda () (autocompletion-with 'autocomplete)))
 
+;; YAML
 (package-bundle 'yaml-mode)
 (use-package yaml-mode
   :mode "\\.yml\\'"
   :bind ("C-m" . newline-and-indent))
 
+;; Go
 (require-or-install 'go-mode)
 (add-hook 'go-mode-hook 'smartparens-mode)
 (with-eval-after-load 'go-mode
@@ -525,34 +494,33 @@
   (add-hook 'before-save-hook 'gofmt-before-save))
 (add-hook 'ocaml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
 
-
+;; Prolog
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
 (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
 (add-to-list 'auto-mode-alist '("\\.swi\\'" . prolog-mode))
 
 (add-hook 'prolog-mode-hook (lambda () (autocompletion-with 'auto-complete)))
 
+;; LLVM
+(when (require 'llvm-mode nil :noerror)
+  (c-add-style "llvm.org"
+               '("gnu"
+                 (fill-column . 80)
+                 (c++-indent-level . 2)
+                 (c-basic-offset . 2)
+                 (indent-tabs-mode . nil)
+                 (c-offsets-alist . ((arglist-intro . ++)
+                                     (innamespace . 0)
+				                             (member-init-intro . ++)))))
 
-(require 'llvm-mode)
-(c-add-style "llvm.org"
-             '("gnu"
-	       (fill-column . 80)
-	       (c++-indent-level . 2)
-	       (c-basic-offset . 2)
-	       (indent-tabs-mode . nil)
-	       (c-offsets-alist . ((arglist-intro . ++)
-				   (innamespace . 0)
-				   (member-init-intro . ++)))))
+  (add-hook 'c-mode-common-hook
+            (function
+             (lambda nil
+               (if (string-match "llvm" buffer-file-name)
+                   (progn
+		                 (c-set-style "llvm.org")))))))
 
-;; Files with "llvm" in their names will automatically be set to the
-;; llvm.org coding style.
-(add-hook 'c-mode-common-hook
-	  (function
-	   (lambda nil
-	     (if (string-match "llvm" buffer-file-name)
-		 (progn
-		   (c-set-style "llvm.org"))))))
-
+;; Racket
 (require-or-install 'racket-mode)
 
 (add-hook 'racket-mode-hook
@@ -561,28 +529,9 @@
 
 (add-hook 'racket-mode-hook      #'racket-unicode-input-method-enable)
 (add-hook 'racket-repl-mode-hook #'racket-unicode-input-method-enable)
-
 (require-or-install 'geiser)
 (setq geiser-active-implementations '(racket))
 
 (add-hook 'scheme-mode-hook (lambda () (autocompletion-with 'company)))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-    ("ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "3b0a350918ee819dca209cec62d867678d7dac74f6195f5e3799aa206358a983" "d3a7eea7ebc9a82b42c47e49517f7a1454116487f6907cf2f5c2df4b09b50fc1" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "6145e62774a589c074a31a05dfa5efdf8789cf869104e905956f0cbd7eda9d0e" "1263771faf6967879c3ab8b577c6c31020222ac6d3bac31f331a74275385a452" "eae831de756bb480240479794e85f1da0789c6f2f7746e5cc999370bbc8d9c8a" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
- '(package-selected-packages
-   (quote
-    (yasnippet-snippets bison-mode crystal-mode cider clojure-mode erlang ocp-indent ac-slime zenburn-theme yasnippet yaml-mode use-package spacemacs-theme sml-mode smex smartparens slime-company scala-mode rainbow-delimiters railscasts-theme racket-mode racer popwin paren-face package-utils noflet markdown-mode jazz-theme ido-vertical-mode hydra go-eldoc geiser flycheck evil-surround evil-numbers esup edts company-go company-ghc alchemist)))
- '(safe-local-variable-values
-   (quote
-    ((intero-targets "malgo:lib" "malgo:test:spec")
-     (intero-targets "malgo:lib" "malgo:exe:malgo" "malgo:test:spec")))))
-
-;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el" :noerror)
