@@ -277,6 +277,13 @@
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 (setq evil-esc-delay 0)
 
+;; leader key
+(defvar leader-key-map (make-sparse-keymap)
+  "Keymap for \"leader key\" shortcuts.")
+
+(define-key evil-normal-state-map "," leader-key-map)
+(define-key leader-key-map "b" 'list-buffers)
+
 (ido-mode 1)
 (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
 (ido-everywhere 1)
@@ -427,6 +434,8 @@
                            'haskell-hlint)
 (setq haskell-stylish-on-save nil)
 
+(define-key leader-key-map "F" 'haskell-mode-stylish-buffer)
+
 (defadvice eldoc-intero-maybe-print (around eldoc-intero-maybe-print-around activate)
   "https://github.com/commercialhaskell/intero/issues/277"
   (unless (string-match
@@ -450,9 +459,9 @@
 ;;; racerやrustfmt、コンパイラにパスを通す
 (add-to-list 'exec-path (expand-file-name "~/.cargo/bin/"))
 ;;; rust-modeでrust-format-on-saveをtにすると自動でrustfmtが走る
-(eval-after-load "rust-mode"
-  '(progn (setq-default rust-format-on-save t)
-          (setq company-tooltip-align-annotations t)))
+(with-eval-after-load "rust-mode"
+  (setq-default rust-format-on-save t)
+  (setq company-tooltip-align-annotations t))
 ;;; rustのファイルを編集するときにracerとflycheckを起動する
 (add-hook 'rust-mode-hook #'racer-mode)
 (add-hook 'rust-mode-hook #'flycheck-mode)
