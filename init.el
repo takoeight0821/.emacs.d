@@ -435,6 +435,7 @@
   (setq haskell-stylish-on-save nil)
   :config
   (add-hook 'haskell-mode-hook #'(lambda () (auto-complete-mode -1)))
+  (add-hook 'haskell-mode-hook #'flycheck-mode)
   (add-hook 'haskell-mode-hook #'flycheck-haskell-setup))
 
 (use-package hindent-mode
@@ -450,8 +451,8 @@
     (unless (string-match
              "^ <no location info>: \\(error: \\)?not an expression: \\(\u2018\u2019\\|\xE2\x80\x98\xE2\x80\x99\\|\x91\x92\\)$"
              (ad-get-arg 0))
-      ad-do-it))
-  )
+      ad-do-it)))
+
 ;; Markdown
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
@@ -460,7 +461,6 @@
 (require-or-install 'toml-mode)
 
 ;; Rust
-
 (package-bundle 'rust-mode)
 (require-or-install 'racer)
 (package-bundle 'flycheck-rust)
@@ -478,8 +478,6 @@
 
 ;;; racerのeldocサポートを使う
 (add-hook 'racer-mode-hook #'eldoc-mode)
-
-;; (package-bundle 'ac-racer)
 
 ;; ;;; racerの補完サポートを使う
 (add-hook 'racer-mode-hook #'(lambda () (autocompletion-with 'company)))
@@ -516,7 +514,6 @@
   (add-hook 'go-mode-hook '(lambda () (autocompletion-with 'autocomplete)))
   (add-hook 'go-mode-hook 'go-eldoc-setup)
   (add-hook 'before-save-hook 'gofmt-before-save))
-(add-hook 'ocaml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
 
 ;; Prolog
 (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
@@ -558,7 +555,9 @@
 
 (add-hook 'scheme-mode-hook (lambda () (autocompletion-with 'company)))
 
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el" :noerror)
+;; OCaml
+(add-hook 'ocaml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -567,3 +566,6 @@
  '(package-selected-packages
    (quote
     (geiser racket-mode go-autocomplete go-eldoc go-mode yaml-mode sml-mode use-package yasnippet toml-mode smex smartparens scala-mode railscasts-theme racer popwin paren-face markdown-mode irony-eldoc intero ido-vertical-mode hindent flycheck-rust flycheck-popup-tip flycheck-irony flycheck-haskell evil-surround evil-numbers company-irony auto-complete))))
+;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; ## end of OPAM user-setup addition for emacs / base ## keep this line
