@@ -51,5 +51,6 @@ distel/
 shellenv.el
 .cache/
 network-security.data
+opam-user-setup.el
 backup/*
 !.gitkeep
