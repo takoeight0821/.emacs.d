@@ -46,7 +46,10 @@ helm-adaptive-history
 abbrev_defs
 smex-items
 ido.last
-
 site-lisp/PG/
 distel/
 shellenv.el
+.cache/
+network-security.data
+backup/*
+!.gitkeep

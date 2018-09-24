@@ -103,7 +103,8 @@
 ;; Prevent beeping.
 (setq ring-bell-function 'ignore)
 
-(setq make-backup-files nil)
+(setq make-backup-files t)
+(setq backup-directory-alist '((".*" . "~/.emacs.d/backup")))
 (setq auto-save-default t)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -387,31 +388,34 @@
     (flycheck-irony-setup)))
 
 ;; ProofGeneral, Coq
-(when (file-directory-p (expand-file-name "~/.emacs.d/site-lisp/PG"))
-  (load "~/.emacs.d/site-lisp/PG/generic/proof-site")
-  (package-bundle 'company-coq)
-  (add-hook 'coq-mode-hook
-            '(lambda ()
-               (autocompletion-with 'company)))
-  (add-hook 'coq-mode-hook
-            #'company-coq-mode)
-  (add-hook 'proof-mode-hook
-            '(lambda ()
-               (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
-  (add-hook 'proof-mode-hook
-            '(lambda ()
-               (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
-  (setf proof-splash-enable nil)
-  (when (not window-system)
-    (setf proof-colour-locked t)
-    (setf overlay-arrow-string ""))
-  (setf proof-follow-mode 'followdown)
-  (setq coq-prog-name "coqtop")
-  (setq coq-compile-before-require t)
-  (setq proof-three-window-mode-policy 'hybrid)
-  (custom-set-faces
-   '(proof-locked-face ((t (:background "gray20"))))
-   '(proof-queue-face ((t (:background "brightred"))))))
+(package-bundle 'proof-general)
+(package-bundle 'company-coq)
+(add-hook 'coq-mode-hook
+          '(lambda ()
+             (autocompletion-with 'company)))
+(add-hook 'coq-mode-hook
+          #'company-coq-mode)
+(add-hook 'proof-mode-hook
+          '(lambda ()
+             (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
+(add-hook 'proof-mode-hook
+          '(lambda ()
+             (define-key proof-mode-map (kbd "C-c RET") 'proof-goto-point)))
+(setf proof-splash-enable nil)
+(when (not window-system)
+  (setf proof-colour-locked t)
+  (setf overlay-arrow-string ""))
+(setf proof-follow-mode 'followdown)
+(setq coq-prog-name "coqtop")
+(setq coq-compile-before-require t)
+(setq proof-three-window-mode-policy 'hybrid)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(proof-locked-face ((t (:background "gray20"))))
+ '(proof-queue-face ((t (:background "brightred")))))
 
 ;; Haskell
 (mapc #'require-or-install
@@ -545,9 +549,3 @@
  '(package-selected-packages
    (quote
     (geiser racket-mode go-autocomplete go-eldoc go-mode yaml-mode sml-mode use-package yasnippet toml-mode smex smartparens scala-mode railscasts-theme racer popwin paren-face markdown-mode irony-eldoc intero ido-vertical-mode hindent flycheck-rust flycheck-popup-tip flycheck-irony flycheck-haskell evil-surround evil-numbers company-irony auto-complete))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
