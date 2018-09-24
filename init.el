@@ -427,22 +427,31 @@
 ;; Haskell
 (mapc #'require-or-install
       '(haskell-mode flycheck-haskell hindent intero))
-(add-hook 'haskell-mode-hook 'intero-mode)
-(add-hook 'haskell-mode-hook #'(lambda () (auto-complete-mode -1)))
-(add-hook 'haskell-mode-hook 'hindent-mode)
-(flycheck-add-next-checker 'intero
-                           'haskell-hlint)
-(setq haskell-stylish-on-save nil)
+(use-package haskell-mode
+  ;; :hook (intero-mode hindent-mode)
+  :bind (:map leader-key-map
+              ("F" . haskell-mode-stylish-buffer))
+  :init
+  (setq haskell-stylish-on-save nil)
+  :config
+  (add-hook 'haskell-mode-hook #'(lambda () (auto-complete-mode -1)))
+  (add-hook 'haskell-mode-hook #'flycheck-haskell-setup))
 
-(define-key leader-key-map "F" 'haskell-mode-stylish-buffer)
+(use-package hindent-mode
+  :hook haskell-mode)
 
-(defadvice eldoc-intero-maybe-print (around eldoc-intero-maybe-print-around activate)
-  "https://github.com/commercialhaskell/intero/issues/277"
-  (unless (string-match
-           "^ <no location info>: \\(error: \\)?not an expression: \\(\u2018\u2019\\|\xE2\x80\x98\xE2\x80\x99\\|\x91\x92\\)$"
-           (ad-get-arg 0))
-    ad-do-it))
-
+(use-package intero-mode
+  :hook haskell-mode
+  :config
+  (flycheck-add-next-checker 'intero
+                             'haskell-hlint)
+  (defadvice eldoc-intero-maybe-print (around eldoc-intero-maybe-print-around activate)
+    "https://github.com/commercialhaskell/intero/issues/277"
+    (unless (string-match
+             "^ <no location info>: \\(error: \\)?not an expression: \\(\u2018\u2019\\|\xE2\x80\x98\xE2\x80\x99\\|\x91\x92\\)$"
+             (ad-get-arg 0))
+      ad-do-it))
+  )
 ;; Markdown
 (require-or-install 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
