@@ -33,6 +33,7 @@
   (or (package-installed-p package)
       (package-install-with-refresh package)))
 
+(package-bundle 'package-utils)
 (require-or-install 'use-package)
 
 ;;; general settings
