@@ -47,7 +47,7 @@
 (prefer-coding-system 'utf-8)
 (setq inhibit-startup-message t)
 (setq initial-scratch-message "")
-(setq initial-major-mode 'emacs-lisp-mode)
+(setq initial-major-mode 'text-mode)
 (setq-default tab-width 2
               indent-tabs-mode nil)
 
@@ -58,16 +58,16 @@
 
 (setq-default x-select-enable-clipboard t)
 
-(when (mac-os-p)
-  (defun copy-from-osx ()
-    (shell-command-to-string "pbpaste"))
-  (defun paste-to-osx (text &optional push)
-    (let ((process-connection-type nil))
-      (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-        (process-send-string proc text)
-        (process-send-eof proc))))
-  (setq interprogram-paste-function 'copy-from-osx)
-  (setq interprogram-cut-function 'paste-to-osx))
+;; (when (mac-os-p)
+;;   (defun copy-from-osx ()
+;;     (shell-command-to-string "reattach-to-user-namespace pbpaste"))
+;;   (defun paste-to-osx (text &optional push)
+;;     (let ((process-connection-type nil))
+;;       (let ((proc (start-process "pbcopy" "*Messages*" "reattach-to-user-namespace" "pbcopy")))
+;;         (process-send-string proc text)
+;;         (process-send-eof proc))))
+;;   (setq interprogram-paste-function 'copy-from-osx)
+;;   (setq interprogram-cut-function 'paste-to-osx))
 
 (when (and (not window-system) (linuxp))
   (when (getenv "DISPLAY")
@@ -422,37 +422,45 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(lsp-face-highlight-read ((t (:background "green"))))
+ '(lsp-face-highlight-textual ((t (:background "blue"))))
+ '(lsp-face-highlight-write ((t (:background "cyan"))))
  '(proof-locked-face ((t (:background "gray20"))))
  '(proof-queue-face ((t (:background "brightred")))))
 
 ;; Haskell
+;; (mapc #'require-or-install
+;;       '(haskell-mode flycheck-haskell hindent intero))
+
+;; (define-key leader-key-map "F" 'haskell-mode-stylish-buffer)
+;; (setq haskell-stylish-on-save nil)
+;; (add-hook 'haskell-mode-hook #'(lambda () (auto-complete-mode -1)))
+;; (add-hook 'haskell-mode-hook #'flycheck-mode)
+;; (add-hook 'haskell-mode-hook #'flycheck-haskell-setup)
+;; (add-hook 'haskell-mode-hook #'hindent-mode)
+;; (add-hook 'haskell-mode-hook #'intero-mode)
+;; (flycheck-add-next-checker 'intero
+;;                            '(warning . haskell-hlint))
+;; (defadvice eldoc-intero-maybe-print (around eldoc-intero-maybe-print-around activate)
+;;   "https://github.com/commercialhaskell/intero/issues/277"
+;;   (unless (string-match
+;;            "^ <no location info>: \\(error: \\)?not an expression: \\(\u2018\u2019\\|\xE2\x80\x98\xE2\x80\x99\\|\x91\x92\\)$"
+;;            (ad-get-arg 0))
+;;     ad-do-it))
+
 (mapc #'require-or-install
-      '(haskell-mode flycheck-haskell hindent intero))
-(use-package haskell-mode
-  ;; :hook (intero-mode hindent-mode)
-  :bind (:map leader-key-map
-              ("F" . haskell-mode-stylish-buffer))
-  :init
-  (setq haskell-stylish-on-save nil)
-  :config
-  (add-hook 'haskell-mode-hook #'(lambda () (auto-complete-mode -1)))
-  (add-hook 'haskell-mode-hook #'flycheck-mode)
-  (add-hook 'haskell-mode-hook #'flycheck-haskell-setup))
+      '(haskell-mode lsp-mode lsp-ui lsp-haskell))
+(add-hook 'haskell-mode-hook #'lsp-mode)
+(add-hook 'haskell-mode-hook #'lsp-haskell-enable)
+(define-key leader-key-map "F" 'haskell-mode-stylish-buffer)
+(add-hook 'haskell-mode-hook 'flycheck-mode)
+(setq lsp-haskell-process-path-hie "hie-wrapper")
 
-(use-package hindent-mode
-  :hook haskell-mode)
+(require-or-install 'company-lsp)
+(push 'company-lsp company-backends)
+(add-hook 'haskell-mode-hook #'(lambda () (autocompletion-with 'company)))
 
-(use-package intero-mode
-  :hook haskell-mode
-  :config
-  (flycheck-add-next-checker 'intero
-                             'haskell-hlint)
-  (defadvice eldoc-intero-maybe-print (around eldoc-intero-maybe-print-around activate)
-    "https://github.com/commercialhaskell/intero/issues/277"
-    (unless (string-match
-             "^ <no location info>: \\(error: \\)?not an expression: \\(\u2018\u2019\\|\xE2\x80\x98\xE2\x80\x99\\|\x91\x92\\)$"
-             (ad-get-arg 0))
-      ad-do-it)))
+(flycheck-add-next-checker 'haskell-stack-ghc '(warning . haskell-hlint))
 
 ;; Markdown
 (require-or-install 'markdown-mode)
@@ -499,6 +507,12 @@
 (add-hook 'sml-mode-hook 'turn-on-smartparens-mode)
 (add-hook 'sml-mode-hook 'electric-indent-mode)
 (add-hook 'sml-mode-hook '(lambda () (autocompletion-with 'autocomplete)))
+
+;; Crystal
+(package-bundle 'crystal-mode)
+(use-package crystal-mode
+  :mode "\\.cr\\'")
+(add-hook 'crystal-mode-hook '(lambda () (autocompletion-with 'company)))
 
 ;; YAML
 (package-bundle 'yaml-mode)
@@ -559,11 +573,33 @@
 ;; OCaml
 (add-hook 'ocaml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
 
+;; Clojure
+
+(package-bundle 'clojure-mode)
+(use-package cider
+  :ensure t)
+
+;; typescript
+(use-package typescript-mode
+  :ensure t)
+(add-hook 'typescript-mode-hook #'(lambda () (autocompletion-with 'company)))
+(use-package tide
+  :ensure t
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save)))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-lsp-enable-snippet nil)
+ '(lsp-eldoc-render-all nil)
+ '(lsp-highlight-symbol-at-point nil)
+ '(lsp-ui-doc-enable nil)
+ '(lsp-ui-peek-enable nil)
  '(package-selected-packages
    (quote
     (geiser racket-mode go-autocomplete go-eldoc go-mode yaml-mode sml-mode use-package yasnippet toml-mode smex smartparens scala-mode railscasts-theme racer popwin paren-face markdown-mode irony-eldoc intero ido-vertical-mode hindent flycheck-rust flycheck-popup-tip flycheck-irony flycheck-haskell evil-surround evil-numbers company-irony auto-complete)))
