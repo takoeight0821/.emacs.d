@@ -172,9 +172,18 @@
       eol-mnemonic-mac "(CR)"
       eol-mnemonic-unix "(LF)")
 
-(if (mac-os-p)
-    (set-face-attribute 'default nil :family "Source Han Code JP L" :height 160 :weight 'light)
-  (set-face-attribute 'default nil :family "Inconsolata" :height 140))
+;; (if (mac-os-p)
+;;     (set-face-attribute 'default nil :family "Source Han Code JP L" :height 160 :weight 'light)
+;;   (set-face-attribute 'default nil :family "Inconsolata" :height 140))
+(set-face-attribute 'default nil
+		    :family "DejaVu Sans Mono"
+		    :height 160
+		    :weight 'normal
+		    :width  'normal)
+(set-fontset-font "fontset-default"
+		  (cons (decode-char 'ucs #x2982)
+			(decode-char 'ucs #x2982))
+		  "STIX")
 
 (package-bundle 'railscasts-theme)
 (load-theme 'railscasts t nil)
@@ -428,39 +437,43 @@
  '(proof-locked-face ((t (:background "gray20"))))
  '(proof-queue-face ((t (:background "brightred")))))
 
+;; LSP
+(mapc #'require-or-install '(lsp-mode))
+(setq lsp-prefer-flymake nil)
+(setq lsp-eldoc-render-all 'eldoc)
+
 ;; Haskell
-;; (mapc #'require-or-install
-;;       '(haskell-mode flycheck-haskell hindent intero))
-
-;; (define-key leader-key-map "F" 'haskell-mode-stylish-buffer)
-;; (setq haskell-stylish-on-save nil)
-;; (add-hook 'haskell-mode-hook #'(lambda () (auto-complete-mode -1)))
-;; (add-hook 'haskell-mode-hook #'flycheck-mode)
-;; (add-hook 'haskell-mode-hook #'flycheck-haskell-setup)
-;; (add-hook 'haskell-mode-hook #'hindent-mode)
-;; (add-hook 'haskell-mode-hook #'intero-mode)
-;; (flycheck-add-next-checker 'intero
-;;                            '(warning . haskell-hlint))
-;; (defadvice eldoc-intero-maybe-print (around eldoc-intero-maybe-print-around activate)
-;;   "https://github.com/commercialhaskell/intero/issues/277"
-;;   (unless (string-match
-;;            "^ <no location info>: \\(error: \\)?not an expression: \\(\u2018\u2019\\|\xE2\x80\x98\xE2\x80\x99\\|\x91\x92\\)$"
-;;            (ad-get-arg 0))
-;;     ad-do-it))
-
 (mapc #'require-or-install
-      '(haskell-mode lsp-mode lsp-ui lsp-haskell))
-(add-hook 'haskell-mode-hook #'lsp-mode)
-(add-hook 'haskell-mode-hook #'lsp-haskell-enable)
-(define-key leader-key-map "F" 'haskell-mode-stylish-buffer)
-(add-hook 'haskell-mode-hook 'flycheck-mode)
+      '(haskell-mode
+        lsp-haskell
+        ;; intero
+        flycheck-haskell
+        ))
+;; (add-hook 'haskell-mode-hook 'intero-mode)
+(add-hook 'haskell-mode-hook 'lsp)
+
+(add-hook 'haskell-mode-hook #'flycheck-mode)
 (setq lsp-haskell-process-path-hie "hie-wrapper")
 
 (require-or-install 'company-lsp)
 (push 'company-lsp company-backends)
 (add-hook 'haskell-mode-hook #'(lambda () (autocompletion-with 'company)))
+(define-key leader-key-map "F" 'haskell-mode-stylish-buffer)
 
 (flycheck-add-next-checker 'haskell-stack-ghc '(warning . haskell-hlint))
+
+;; (flycheck-add-next-checker 'intero '(warning . haskell-hlint))
+
+;; (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+;; (add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
+;; (add-hook 'haskell-mode-hook 'haskell-doc-mode)
+;; ;; (add-hook 'haskell-mode-hook #'flycheck-haskell-setup)
+;; ;; (add-hook 'haskell-mode-hook 'flycheck-mode)
+;; (add-hook 'haskell-mode-hook
+;;           (lambda ()
+;;             (set (make-local-variable 'company-backends)
+;;                  (append '((company-capf company-dabbrev-code))
+;;                          company-backends))))
 
 ;; Markdown
 (require-or-install 'markdown-mode)
@@ -590,12 +603,30 @@
          (typescript-mode . tide-hl-identifier-mode)
          (before-save . tide-format-before-save)))
 
+
+;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+
+;; Agda
+(load-file (let ((coding-system-for-read 'utf-8))
+                (shell-command-to-string "agda-mode locate")))
+
+;; Common Lisp
+
+(when (file-exists-p (expand-file-name "~/.roswell/helper.el"))
+  (load (expand-file-name "~/.roswell/helper.el")))
+(setq inferior-lisp-program "ros -Q run")
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(company-lsp-enable-snippet nil)
+ '(haskell-process-auto-import-loaded-modules t)
+ '(haskell-process-log t)
+ '(haskell-process-suggest-remove-import-lines t)
  '(lsp-eldoc-render-all nil)
  '(lsp-highlight-symbol-at-point nil)
  '(lsp-ui-doc-enable nil)
@@ -603,7 +634,8 @@
  '(package-selected-packages
    (quote
     (geiser racket-mode go-autocomplete go-eldoc go-mode yaml-mode sml-mode use-package yasnippet toml-mode smex smartparens scala-mode railscasts-theme racer popwin paren-face markdown-mode irony-eldoc intero ido-vertical-mode hindent flycheck-rust flycheck-popup-tip flycheck-irony flycheck-haskell evil-surround evil-numbers company-irony auto-complete)))
- '(safe-local-variable-values (quote ((intero-targets "malgo:lib" "malgo:test:spec")))))
-;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+ '(safe-local-variable-values
+   (quote
+    ((haskell-process-type . cabal-new-repl)
+     (haskell-process-type quote cabal-new-repl)
+     (intero-targets "malgo:lib" "malgo:test:spec")))))
