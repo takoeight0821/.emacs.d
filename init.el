@@ -58,16 +58,16 @@
 
 (setq-default x-select-enable-clipboard t)
 
-;; (when (mac-os-p)
-;;   (defun copy-from-osx ()
-;;     (shell-command-to-string "reattach-to-user-namespace pbpaste"))
-;;   (defun paste-to-osx (text &optional push)
-;;     (let ((process-connection-type nil))
-;;       (let ((proc (start-process "pbcopy" "*Messages*" "reattach-to-user-namespace" "pbcopy")))
-;;         (process-send-string proc text)
-;;         (process-send-eof proc))))
-;;   (setq interprogram-paste-function 'copy-from-osx)
-;;   (setq interprogram-cut-function 'paste-to-osx))
+(when (mac-os-p)
+  (defun copy-from-osx ()
+    (shell-command-to-string "reattach-to-user-namespace pbpaste"))
+  (defun paste-to-osx (text &optional push)
+    (let ((process-connection-type nil))
+      (let ((proc (start-process "pbcopy" "*Messages*" "reattach-to-user-namespace" "pbcopy")))
+        (process-send-string proc text)
+        (process-send-eof proc))))
+  (setq interprogram-paste-function 'copy-from-osx)
+  (setq interprogram-cut-function 'paste-to-osx))
 
 (when (and (not window-system) (linuxp))
   (when (getenv "DISPLAY")
@@ -124,6 +124,7 @@
   (add-to-list 'load-path default-directory)
   (if (fboundp 'normal-top-level-add-subdirs-to-load-path)
       (normal-top-level-add-subdirs-to-load-path))))
+
 (defun font-big ()
   (interactive)
   (set-face-attribute 'default nil :height
@@ -328,7 +329,6 @@
 
 (package-bundle 'smartparens)
 (require 'smartparens-config)
-;; (require 'bind-key)
 (add-hook 'after-init-hook 'turn-on-smartparens-mode)
 (define-key smartparens-mode-map (kbd "C-M-f") 'sp-forward-sexp)
 (define-key smartparens-mode-map (kbd "C-M-b") 'sp-backward-sexp)
@@ -450,7 +450,7 @@
         flycheck-haskell
         ))
 ;; (add-hook 'haskell-mode-hook 'intero-mode)
-(add-hook 'haskell-mode-hook 'lsp)
+(add-hook 'haskell-mode-hook #'lsp)
 
 (add-hook 'haskell-mode-hook #'flycheck-mode)
 (setq lsp-haskell-process-path-hie "hie-wrapper")
@@ -461,7 +461,6 @@
 (define-key leader-key-map "F" 'haskell-mode-stylish-buffer)
 
 (flycheck-add-next-checker 'haskell-stack-ghc '(warning . haskell-hlint))
-
 ;; (flycheck-add-next-checker 'intero '(warning . haskell-hlint))
 
 ;; (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
