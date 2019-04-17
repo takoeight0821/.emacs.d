@@ -441,16 +441,17 @@
 (mapc #'require-or-install '(lsp-mode))
 (setq lsp-prefer-flymake nil)
 (setq lsp-eldoc-render-all 'eldoc)
+(require-or-install 'lsp-ui)
+(add-hook 'lsp-mode-hook 'lsp-ui-mode)
 
 ;; Haskell
 (mapc #'require-or-install
       '(haskell-mode
-        lsp-haskell
-        ;; intero
+        intero
         flycheck-haskell
         ))
-;; (add-hook 'haskell-mode-hook 'intero-mode)
-(add-hook 'haskell-mode-hook #'lsp)
+(add-hook 'haskell-mode-hook 'intero-mode)
+;; (add-hook 'haskell-mode-hook #'lsp)
 
 (add-hook 'haskell-mode-hook #'flycheck-mode)
 (setq lsp-haskell-process-path-hie "hie-wrapper")
@@ -460,8 +461,8 @@
 (add-hook 'haskell-mode-hook #'(lambda () (autocompletion-with 'company)))
 (define-key leader-key-map "F" 'haskell-mode-stylish-buffer)
 
-(flycheck-add-next-checker 'haskell-stack-ghc '(warning . haskell-hlint))
-;; (flycheck-add-next-checker 'intero '(warning . haskell-hlint))
+;; (flycheck-add-next-checker 'haskell-stack-ghc '(warning . haskell-hlint))
+(flycheck-add-next-checker 'intero '(warning . haskell-hlint))
 
 ;; (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 ;; (add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
@@ -617,6 +618,14 @@
   (load (expand-file-name "~/.roswell/helper.el")))
 (setq inferior-lisp-program "ros -Q run")
 
+;; Ruby
+
+(package-bundle 'robe)
+(add-hook 'ruby-mode-hook 'robe-mode)
+(eval-after-load 'company
+  '(push 'company-robe company-backends))
+(add-hook 'ruby-mode-hook (lambda () (autocompletion-with 'company)))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -628,8 +637,6 @@
  '(haskell-process-suggest-remove-import-lines t)
  '(lsp-eldoc-render-all nil)
  '(lsp-highlight-symbol-at-point nil)
- '(lsp-ui-doc-enable nil)
- '(lsp-ui-peek-enable nil)
  '(package-selected-packages
    (quote
     (geiser racket-mode go-autocomplete go-eldoc go-mode yaml-mode sml-mode use-package yasnippet toml-mode smex smartparens scala-mode railscasts-theme racer popwin paren-face markdown-mode irony-eldoc intero ido-vertical-mode hindent flycheck-rust flycheck-popup-tip flycheck-irony flycheck-haskell evil-surround evil-numbers company-irony auto-complete)))
