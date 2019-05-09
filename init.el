@@ -37,7 +37,7 @@
 (require-or-install 'use-package)
 
 ;;; general settings
-(set-language-environment "Japanese")
+(set-language-environment 'utf-8)
 (setq eval-expression-print-level nil)
 (setq max-lisp-eval-depth 10000)
 (setq gc-cons-threshold (* 10 gc-cons-threshold))
@@ -176,21 +176,19 @@
 ;; (if (mac-os-p)
 ;;     (set-face-attribute 'default nil :family "Source Han Code JP L" :height 160 :weight 'light)
 ;;   (set-face-attribute 'default nil :family "Inconsolata" :height 140))
-(set-face-attribute 'default nil
-		    :family "DejaVu Sans Mono"
-		    :height 160
-		    :weight 'normal
-		    :width  'normal)
-(set-fontset-font "fontset-default"
-		  (cons (decode-char 'ucs #x2982)
-			(decode-char 'ucs #x2982))
-		  "STIX")
+;; (set-face-attribute 'default nil
+;; 		    :family "DejaVu Sans Mono"
+;; 		    :height 160
+;; 		    :weight 'normal
+;; 		    :width  'normal)
+;; (set-font "fontset-default"
+;; 		  (cons (decode-char 'ucs #x2982)
+;; 			(decode-char 'ucs #x2982))
+;; 		  "STIX")
 
 (package-bundle 'railscasts-theme)
 (load-theme 'railscasts t nil)
 (setq frame-background-mode 'dark)
-
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 (require-or-install 'paren-face)
 
@@ -206,6 +204,7 @@
   (add-hook 'flycheck-mode-hook 'flycheck-popup-tip-mode))
 
 (require-or-install 'yasnippet)
+(package-bundle 'yasnippet-snippets)
 (yas-global-mode 1)
 
 (require-or-install 'company)
@@ -389,6 +388,10 @@
 
 (add-hook 'c-mode-hook 'flycheck-mode)
 (add-hook 'c++-mode-hook 'flycheck-mode)
+
+(add-hook 'c-mode-hook
+          '(lambda()
+             (setq-default sp-escape-quotes-after-insert nil)))
 
 (with-eval-after-load "irony"
   ;; (custom-set-variables '(irony-additional-clang-options '("-std=c++14")))
@@ -604,13 +607,9 @@
          (before-save . tide-format-before-save)))
 
 
-;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-;; ## end of OPAM user-setup addition for emacs / base ## keep this line
-
-;; Agda
-(load-file (let ((coding-system-for-read 'utf-8))
-                (shell-command-to-string "agda-mode locate")))
+;; ;; Agda
+;; (load-file (let ((coding-system-for-read 'utf-8))
+;;                 (shell-command-to-string "agda-mode locate")))
 
 ;; Common Lisp
 
@@ -625,6 +624,21 @@
 (eval-after-load 'company
   '(push 'company-robe company-backends))
 (add-hook 'ruby-mode-hook (lambda () (autocompletion-with 'company)))
+
+(package-bundle 'esup)
+
+(require-or-install 'multi-term)
+;; ;; シェルの設定
+(defun search-shell ()
+  (or (executable-find "zsh")
+      (executable-find "bash")
+      (error "can't find 'shell' command in PATH!!")))
+
+(setq shell-file-name (search-shell))
+(setenv "SHELL" shell-file-name)
+(setq multi-term-program shell-file-name)
+
+(require-or-install 'elm-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -645,3 +659,6 @@
     ((haskell-process-type . cabal-new-repl)
      (haskell-process-type quote cabal-new-repl)
      (intero-targets "malgo:lib" "malgo:test:spec")))))
+;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; ## end of OPAM user-setup addition for emacs / base ## keep this line
