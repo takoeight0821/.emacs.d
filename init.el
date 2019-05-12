@@ -441,42 +441,16 @@
  '(proof-queue-face ((t (:background "brightred")))))
 
 ;; LSP
-(mapc #'require-or-install '(lsp-mode))
-(setq lsp-prefer-flymake nil)
-(setq lsp-eldoc-render-all 'eldoc)
-(require-or-install 'lsp-ui)
-(add-hook 'lsp-mode-hook 'lsp-ui-mode)
+(package-bundle 'eglot)
 
 ;; Haskell
-(mapc #'require-or-install
-      '(haskell-mode
-        intero
-        flycheck-haskell
-        ))
-(add-hook 'haskell-mode-hook 'intero-mode)
-;; (add-hook 'haskell-mode-hook #'lsp)
-
-(add-hook 'haskell-mode-hook #'flycheck-mode)
-(setq lsp-haskell-process-path-hie "hie-wrapper")
-
-(require-or-install 'company-lsp)
-(push 'company-lsp company-backends)
-(add-hook 'haskell-mode-hook #'(lambda () (autocompletion-with 'company)))
-(define-key leader-key-map "F" 'haskell-mode-stylish-buffer)
-
 ;; (flycheck-add-next-checker 'haskell-stack-ghc '(warning . haskell-hlint))
-(flycheck-add-next-checker 'intero '(warning . haskell-hlint))
+(package-bundle 'flycheck-haskell)
+(add-hook 'haskell-mode-hook 'eglot-ensure)
+(add-hook 'haskell-mode-hook 'flycheck-mode)
+(with-eval-after-load 'haskell-mode
+  (setq flymake-allowed-file-name-masks (delete '("\\.l?hs\\'" haskell-flymake-init) flymake-allowed-file-name-masks)))
 
-;; (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-;; (add-hook 'haskell-mode-hook 'haskell-decl-scan-mode)
-;; (add-hook 'haskell-mode-hook 'haskell-doc-mode)
-;; ;; (add-hook 'haskell-mode-hook #'flycheck-haskell-setup)
-;; ;; (add-hook 'haskell-mode-hook 'flycheck-mode)
-;; (add-hook 'haskell-mode-hook
-;;           (lambda ()
-;;             (set (make-local-variable 'company-backends)
-;;                  (append '((company-capf company-dabbrev-code))
-;;                          company-backends))))
 
 ;; Markdown
 (require-or-install 'markdown-mode)
