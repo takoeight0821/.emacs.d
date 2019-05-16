@@ -587,9 +587,11 @@
 
 ;; Common Lisp
 
+(package-bundle 'slime-company)
 (when (file-exists-p (expand-file-name "~/.roswell/helper.el"))
   (load (expand-file-name "~/.roswell/helper.el")))
 (setq inferior-lisp-program "ros -Q run")
+(add-hook 'lisp-mode-hook '(lambda () (autocompletion-with 'company)))
 
 ;; Ruby
 
