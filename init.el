@@ -1,9 +1,11 @@
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 ;; require packages
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives  '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
+; (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+; (add-to-list 'package-archives  '("marmalade" . "http://marmalade-repo.org/packages/") t)
+; (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 
 ;; utilities
@@ -208,11 +210,12 @@
 (yas-global-mode 1)
 
 (require-or-install 'company)
+(add-hook 'after-init-hook 'global-company-mode)
 (setq-default company-idle-delay 0.1
               company-minimum-prefix-length 2
               company-selection-wrap-around t)
 
-(add-to-list 'company-backends '(company-yasnippet company-capf company-dabbrev))
+(add-to-list 'company-backends '(company-capf company-yasnippet company-dabbrev))
 
 ;; C-n, C-pで補完候補を次/前の候補を選択
 (define-key company-active-map (kbd "C-n") 'company-select-next)
@@ -243,26 +246,6 @@
                     :background "orange")
 (set-face-attribute 'company-scrollbar-bg nil
                     :background "gray40")
-
-(require-or-install 'auto-complete)
-(ac-config-default)
-(define-key ac-completing-map (kbd "C-n") 'ac-next)
-(define-key ac-completing-map (kbd "C-p") 'ac-previous)
-(auto-complete-mode -1)
-(company-mode 1)
-
-(defvar *autocompletion-mode* 'auto-complete)
-(defun autocompletion-with (mode)
-  (message "autocompletion called with %s" mode)
-  (auto-complete-mode -1)
-  (company-mode -1)
-  (if (eq mode 'company)
-      (progn (auto-complete-mode -1)
-             (company-mode 1)
-             (setq *autocompletion-mode* 'company))
-    (progn (company-mode -1)
-           (auto-complete-mode 1)
-           (setq *autocompletion-mode* 'auto-complete))))
 
 (setq evil-want-abbrev-expand-on-insert-exit nil)
 (mapc #'require-or-install '(evil evil-surround evil-numbers))
@@ -324,7 +307,8 @@
                 ;; ("*GHC Error*")
                 (slime-connection-list-mode)
                 (slime-repl-mode)
-                (sldb-mode :height 20 :stick t))))
+                (sldb-mode :height 20 :stick t)
+                )))
 
 (package-bundle 'smartparens)
 (require 'smartparens-config)
@@ -381,7 +365,7 @@
           (lambda ()
             (turn-on-smartparens-mode)
             (electric-indent-mode 1)
-            (autocompletion-with 'company)
+            (company-mode 1)
             (setq c-default-style "k&r")
             (setq indent-tabs-mode nil)
             (setq c-basic-offset 2)))
@@ -410,9 +394,7 @@
 ;; ProofGeneral, Coq
 (package-bundle 'proof-general)
 (package-bundle 'company-coq)
-(add-hook 'coq-mode-hook
-          '(lambda ()
-             (autocompletion-with 'company)))
+(add-hook 'coq-mode-hook 'company-mode)
 (add-hook 'coq-mode-hook
           #'company-coq-mode)
 (add-hook 'proof-mode-hook
@@ -429,28 +411,28 @@
 (setq coq-prog-name "coqtop")
 (setq coq-compile-before-require t)
 (setq proof-three-window-mode-policy 'hybrid)
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(lsp-face-highlight-read ((t (:background "green"))))
- '(lsp-face-highlight-textual ((t (:background "blue"))))
- '(lsp-face-highlight-write ((t (:background "cyan"))))
- '(proof-locked-face ((t (:background "gray20"))))
- '(proof-queue-face ((t (:background "brightred")))))
 
 ;; LSP
 (package-bundle 'eglot)
 
 ;; Haskell
-;; (flycheck-add-next-checker 'haskell-stack-ghc '(warning . haskell-hlint))
+(package-bundle 'haskell-mode)
 (package-bundle 'flycheck-haskell)
-(add-hook 'haskell-mode-hook 'eglot-ensure)
+(require 'haskell-mode)
+(require 'floskell)
 (add-hook 'haskell-mode-hook 'flycheck-mode)
-(with-eval-after-load 'haskell-mode
-  (setq flymake-allowed-file-name-masks (delete '("\\.l?hs\\'" haskell-flymake-init) flymake-allowed-file-name-masks)))
+(add-hook 'haskell-mode-hook #'floskell-mode)
 
+;; (add-hook 'haskell-mode-hook #'eglot-ensure)
+;; (with-eval-after-load 'haskell-mode
+;;   (setq flymake-allowed-file-name-masks (delete '("\\.l?hs\\'" haskell-flymake-init) flymake-allowed-file-name-masks)))
+(add-hook 'haskell-mode-hook 'company-mode)
+(package-bundle 'intero)
+(require 'intero)
+(flycheck-add-next-checker 'intero '(warning . haskell-hlint))
+(intero-global-mode 1)
+
+(flycheck-add-next-checker 'haskell-stack-ghc '(warning . haskell-hlint))
 
 ;; Markdown
 (require-or-install 'markdown-mode)
@@ -479,7 +461,7 @@
 (add-hook 'racer-mode-hook #'eldoc-mode)
 
 ;; ;;; racerの補完サポートを使う
-(add-hook 'racer-mode-hook #'(lambda () (autocompletion-with 'company)))
+(add-hook 'racer-mode-hook 'company-mode)
 
 ;; Scala
 (package-bundle 'scala-mode)
@@ -496,13 +478,13 @@
 
 (add-hook 'sml-mode-hook 'turn-on-smartparens-mode)
 (add-hook 'sml-mode-hook 'electric-indent-mode)
-(add-hook 'sml-mode-hook '(lambda () (autocompletion-with 'autocomplete)))
+(add-hook 'sml-mode-hook 'company-mode)
 
 ;; Crystal
 (package-bundle 'crystal-mode)
 (use-package crystal-mode
   :mode "\\.cr\\'")
-(add-hook 'crystal-mode-hook '(lambda () (autocompletion-with 'company)))
+(add-hook 'crystal-mode-hook 'company-mode)
 
 ;; YAML
 (package-bundle 'yaml-mode)
@@ -515,8 +497,8 @@
 (add-hook 'go-mode-hook 'smartparens-mode)
 (with-eval-after-load 'go-mode
   (require-or-install 'go-eldoc)
-  (require-or-install 'go-autocomplete)
-  (add-hook 'go-mode-hook '(lambda () (autocompletion-with 'autocomplete)))
+  ;; (require-or-install 'go-autocomplete)
+  ;; (add-hook 'go-mode-hook '(lambda () (autocompletion-with 'autocomplete)))
   (add-hook 'go-mode-hook 'go-eldoc-setup)
   (add-hook 'before-save-hook 'gofmt-before-save))
 
@@ -525,7 +507,7 @@
 (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
 (add-to-list 'auto-mode-alist '("\\.swi\\'" . prolog-mode))
 
-(add-hook 'prolog-mode-hook (lambda () (autocompletion-with 'auto-complete)))
+(add-hook 'prolog-mode-hook 'company-mode)
 
 ;; LLVM
 (when (require 'llvm-mode nil :noerror)
@@ -557,11 +539,7 @@
 (add-hook 'racket-repl-mode-hook #'racket-unicode-input-method-enable)
 (require-or-install 'geiser)
 (setq geiser-active-implementations '(racket))
-
-(add-hook 'scheme-mode-hook (lambda () (autocompletion-with 'company)))
-
-;; OCaml
-(add-hook 'ocaml-mode-hook (lambda () (autocompletion-with 'autocomplete)))
+(add-hook 'scheme-mode-hook 'company-mode)
 
 ;; Clojure
 
@@ -569,10 +547,10 @@
 (use-package cider
   :ensure t)
 
-;; typescript
+;; TypeScript
 (use-package typescript-mode
   :ensure t)
-(add-hook 'typescript-mode-hook #'(lambda () (autocompletion-with 'company)))
+(add-hook 'typescript-mode-hook 'company-mode)
 (use-package tide
   :ensure t
   :after (typescript-mode company flycheck)
@@ -591,7 +569,7 @@
 (when (file-exists-p (expand-file-name "~/.roswell/helper.el"))
   (load (expand-file-name "~/.roswell/helper.el")))
 (setq inferior-lisp-program "ros -Q run")
-(add-hook 'lisp-mode-hook '(lambda () (autocompletion-with 'company)))
+(add-hook 'lisp-mode-hook 'company-mode)
 
 ;; Ruby
 
@@ -599,10 +577,12 @@
 (add-hook 'ruby-mode-hook 'robe-mode)
 (eval-after-load 'company
   '(push 'company-robe company-backends))
-(add-hook 'ruby-mode-hook (lambda () (autocompletion-with 'company)))
+(add-hook 'ruby-mode-hook 'company-mode)
 
+;; esup
 (package-bundle 'esup)
 
+;; Shell
 (require-or-install 'multi-term)
 ;; ;; シェルの設定
 (defun search-shell ()
@@ -614,27 +594,29 @@
 (setenv "SHELL" shell-file-name)
 (setq multi-term-program shell-file-name)
 
+;; Elm
 (require-or-install 'elm-mode)
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(proof-locked-face ((t (:background "gray20"))))
+ '(proof-queue-face ((t (:background "brightred")))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-lsp-enable-snippet nil)
- '(haskell-process-auto-import-loaded-modules t)
- '(haskell-process-log t)
- '(haskell-process-suggest-remove-import-lines t)
- '(lsp-eldoc-render-all nil)
- '(lsp-highlight-symbol-at-point nil)
+ '(eglot-ignored-server-capabilites (quote (:hoverProvider)))
  '(package-selected-packages
    (quote
-    (geiser racket-mode go-autocomplete go-eldoc go-mode yaml-mode sml-mode use-package yasnippet toml-mode smex smartparens scala-mode railscasts-theme racer popwin paren-face markdown-mode irony-eldoc intero ido-vertical-mode hindent flycheck-rust flycheck-popup-tip flycheck-irony flycheck-haskell evil-surround evil-numbers company-irony auto-complete)))
- '(safe-local-variable-values
-   (quote
-    ((haskell-process-type . cabal-new-repl)
-     (haskell-process-type quote cabal-new-repl)
-     (intero-targets "malgo:lib" "malgo:test:spec")))))
+    (elm-mode multi-term esup robe slime-company tide typescript-mode cider clojure-mode crystal-mode geiser racket-mode go-eldoc go-mode yaml-mode sml-mode use-package yasnippet toml-mode smex smartparens scala-mode railscasts-theme racer popwin paren-face markdown-mode irony-eldoc ido-vertical-mode hindent flycheck-rust flycheck-popup-tip flycheck-irony flycheck-haskell evil-surround evil-numbers company-irony))))
+
+;; OCaml
+
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
